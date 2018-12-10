@@ -1,0 +1,27 @@
+language: node_js
+node_js: 10
+
+services:
+  - docker
+before_script:
+  - docker pull linuxserver/transmission
+  - docker run -d -p 9091:9091 -p 51413:51413 --net=host linuxserver/deluge
+
+script:
+  - npm run lint
+  - npm run test:ci
+  - npm run build
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - npm run travis-deploy-once "npm run semantic-release"
+  - npm run build:docs
+
+deploy:
+  provider: pages
+  skip_cleanup: true
+  local_dir: docs
+  github_token: $GH_TOKEN
+  on:
+    branch: master
+notifications:
+  email: false
