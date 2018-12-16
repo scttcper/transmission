@@ -187,7 +187,7 @@ export class Transmission {
         headers,
       });
     } catch (error) {
-      if (error.response.statusCode === 409) {
+      if (error.response && error.response.statusCode === 409) {
         this.sessionId = error.response.headers['x-transmission-session-id'];
         return this.request<T>(method, args);
       }
