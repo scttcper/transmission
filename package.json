@@ -4,7 +4,7 @@
   "description": "",
   "author": "Scott Cooper <scttcper@gmail.com>",
   "license": "MIT",
-  "repository": "",
+  "repository": "scttcper/transmission",
   "keywords": [
     "transmission",
     "typescript"
@@ -24,24 +24,22 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:ci": "jest --coverage --no-cache",
-    "travis-deploy-once": "travis-deploy-once",
     "semantic-release": "cd dist && semantic-release"
   },
   "dependencies": {
-    "got": "9.3.2"
+    "got": "9.4.0"
   },
   "devDependencies": {
     "@types/got": "9.2.1",
     "@types/jest": "23.3.10",
-    "@types/node": "10.12.12",
+    "@types/node": "10.12.15",
     "@types/p-wait-for": "^2.0.0",
     "jest": "23.6.0",
     "microbundle": "0.7.0",
     "p-wait-for": "2.0.1",
     "prettier": "1.15.3",
     "rimraf": "2.6.2",
-    "semantic-release": "15.12.4",
-    "travis-deploy-once": "5.0.9",
+    "semantic-release": "15.13.0",
     "ts-jest": "23.10.5",
     "ts-node": "7.0.1",
     "tslint": "5.11.0",

@@ -2,13 +2,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "moduleResolution": "node",
-    "lib": ["es2017"],
-    "target": "es2015",
+    "lib": ["esnext"],
+    "target": "esnext",
     "module": "es2015",
     "esModuleInterop": true,
     "strict": true,
     "noImplicitAny": false,
-    "noUnusedLocals": true,
+    // "noUnusedLocals": true,
     "sourceMap": true,
     "outDir": "dist"
   }

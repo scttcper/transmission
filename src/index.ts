@@ -1,6 +1,16 @@
 import { resolve } from 'url';
 import got, { Response } from 'got';
-import { AddTorrentOptions, AddTorrentResponse, SessionResponse, SessionArguments } from './types';
+import fs from 'fs';
+import {
+  AddTorrentOptions,
+  AddTorrentResponse,
+  SessionResponse,
+  SessionArguments,
+  TorrentIds,
+  GetTorrentRepsonse,
+  DefaultResponse,
+  FreeSpaceResponse,
+} from './types';
 
 export interface TramissionConfig {
   baseURL: string;
@@ -18,6 +28,7 @@ const defaults: TramissionConfig = {
 
 export class Transmission {
   config: TramissionConfig;
+  sessionId?: string;
 
   constructor(options: Partial<TramissionConfig>) {
     this.config = { ...defaults, ...options };
@@ -29,14 +40,62 @@ export class Transmission {
   }
 
   async setSession(args: Partial<SessionArguments>) {
-    const res = await this.request<SessionResponse>('session-set', { arguments: args });
+    const res = await this.request<SessionResponse>('session-set', args);
+    return res.body;
+  }
+
+  async queueTop(ids: TorrentIds) {
+    const res = await this.request<DefaultResponse>('queue-move-top', { ids });
+    return res.body;
+  }
+
+  async queueBottom(ids: TorrentIds) {
+    const res = await this.request<DefaultResponse>('queue-move-bottom', { ids });
+    return res.body;
+  }
+
+  async queueUp(ids: TorrentIds) {
+    const res = await this.request<DefaultResponse>('queue-move-up', { ids });
+    return res.body;
+  }
+
+  async queueDown(ids: TorrentIds) {
+    const res = await this.request<DefaultResponse>('queue-move-down', { ids });
+    return res.body;
+  }
+
+  async freeSpace(path = '/downloads/complete') {
+    const res = await this.request<FreeSpaceResponse>('free-space', { path });
+    return res.body;
+  }
+
+  async pauseTorrent(ids: TorrentIds) {
+    const res = await this.request<DefaultResponse>('torrent-stop', { ids });
+    return res.body;
+  }
+
+  async resumeTorrent(ids: TorrentIds) {
+    const res = await this.request<DefaultResponse>('torrent-start', { ids });
+    return res.body;
+  }
+
+  /**
+   * ask tracker for more peers
+   */
+  async reannounceTorrent(ids: TorrentIds) {
+    const res = await this.request<DefaultResponse>('torrent-reannounce', { ids });
+    return res.body;
+  }
+
+  async moveTorrent(ids: TorrentIds, location: string) {
+    const res = await this.request<DefaultResponse>("torrent-set-location", { ids, move: true, location });
     return res.body;
   }
 
   /**
    * Removing a Torrent
    */
-  async removeTorrent(ids: number[], removeData = true) {
+  async removeTorrent(ids: TorrentIds, removeData = true) {
     const res = await this.request<AddTorrentResponse>('torrent-remove', {
       ids,
       'delete-local-data': removeData,
@@ -54,27 +113,80 @@ export class Transmission {
       ...options,
     };
 
-    const f = fs.createReadStream(filePath);
-    args.metainfo = f.toString('base64');
+    const file = fs.readFileSync(filePath);
+    args.metainfo = Buffer.from(file).toString('base64');
 
     const res = await this.request<AddTorrentResponse>('torrent-add', args);
     return res.body;
   }
 
+  async listTorrents(ids?: TorrentIds, additionalFields: string[] = []) {
+    const fields = [
+      'id',
+      'addedDate',
+      'name',
+      'totalSize',
+      'error',
+      'errorString',
+      'eta',
+      'isFinished',
+      'isStalled',
+      'leftUntilDone',
+      'metadataPercentComplete',
+      'peersConnected',
+      'peersGettingFromUs',
+      'peersSendingToUs',
+      'percentDone',
+      'queuePosition',
+      'rateDownload',
+      'rateUpload',
+      'recheckProgress',
+      'seedRatioMode',
+      'seedRatioLimit',
+      'sizeWhenDone',
+      'status',
+      'trackers',
+      'downloadDir',
+      'uploadedEver',
+      'uploadRatio',
+      'webseedsSendingToUs',
+      ...additionalFields,
+    ];
+    const args: any = { fields };
+    if (ids) {
+      args.ids = ids;
+    }
+    const res = await this.request<GetTorrentRepsonse>('torrent-get', args);
+    return res.body;
+  }
+
   async request<T extends object>(method: string, args: any = {}): Promise<Response<T>> {
-    const headers: any = {};
+    if (!this.sessionId && method !== 'session-get') {
+      await this.getSession();
+    }
+    const headers: any = {
+      'X-Transmission-Session-Id': this.sessionId,
+    };
     if (this.config.username || this.config.password) {
       const auth = this.config.username + (this.config.password ? `:${this.config.password}` : '');
-      headers.Authorization = Buffer.from(auth).toString('base64');
+      headers.Authorization = 'Basic ' + Buffer.from(auth).toString('base64');
     }
     const url = resolve(this.config.baseURL, this.config.path);
-    return got.post(url, {
-      json: true,
-      body: {
-        method,
-        arguments: args,
-      },
-      headers,
-    });
+    try {
+      return await got.post(url, {
+        json: true,
+        body: {
+          method,
+          arguments: args,
+        },
+        headers,
+      });
+    } catch (error) {
+      if (error.response.statusCode === 409) {
+        this.sessionId = error.response.headers['x-transmission-session-id'];
+        return this.request<T>(method, args);
+      }
+      throw error;
+    }
   }
 }
