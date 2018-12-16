@@ -4,7 +4,7 @@
   "description": "",
   "author": "Scott Cooper <scttcper@gmail.com>",
   "license": "MIT",
-  "repository": "scttcper/transmission",
+  "repository": "typectrl/transmission",
   "keywords": [
     "transmission",
     "typescript"
@@ -33,7 +33,7 @@
     "@types/got": "9.2.1",
     "@types/jest": "23.3.10",
     "@types/node": "10.12.15",
-    "@types/p-wait-for": "^2.0.0",
+    "@types/p-wait-for": "2.0.0",
     "jest": "23.6.0",
     "microbundle": "0.7.0",
     "p-wait-for": "2.0.1",
