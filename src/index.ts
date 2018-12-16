@@ -79,6 +79,11 @@ export class Transmission {
     return res.body;
   }
 
+  async verifyTorrent(ids: TorrentIds) {
+    const res = await this.request<DefaultResponse>('torrent-verify', { ids });
+    return res.body;
+  }
+
   /**
    * ask tracker for more peers
    */

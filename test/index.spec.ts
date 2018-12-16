@@ -43,22 +43,23 @@ describe('Transmission', () => {
   });
   it('should remove torrent', async () => {
     const transmission = new Transmission({ baseURL });
-    await setupTorrent(transmission);
-    const res = await transmission.listTorrents();
-    expect(res.arguments.torrents).toHaveLength(1);
-    await transmission.removeTorrent(res.arguments.torrents[0].id, false);
+    const key = await setupTorrent(transmission);
+    await transmission.removeTorrent(key, false);
+  });
+  it('should verify torrent', async () => {
+    const transmission = new Transmission({ baseURL });
+    const key = await setupTorrent(transmission);
+    await transmission.verifyTorrent(key);
   });
   it('should move in queue', async () => {
     const transmission = new Transmission({ baseURL });
-    await setupTorrent(transmission);
-    const res = await transmission.listTorrents();
-    const key = res.arguments.torrents[0].id;
+    const key = await setupTorrent(transmission);
     await transmission.queueUp(key);
     await transmission.queueDown(key);
     await transmission.queueTop(key);
     await transmission.queueBottom(key);
   });
-  it('should give free space', async () => {
+  it('should report free space', async () => {
     const transmission = new Transmission({ baseURL });
     const p = '/downloads';
     const res = await transmission.freeSpace(p);
