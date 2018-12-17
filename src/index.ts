@@ -30,7 +30,7 @@ export class Transmission {
   config: TramissionConfig;
   sessionId?: string;
 
-  constructor(options: Partial<TramissionConfig>) {
+  constructor(options: Partial<TramissionConfig> = {}) {
     this.config = { ...defaults, ...options };
   }
 
