@@ -109,18 +109,25 @@ export class Transmission {
   }
 
   /**
-   * Adding a Torrent
+   * Adding a torrent
+   * @param torrent a string of file path or contents of the file as base64 string
    */
-  async addTorrent(filePath: string, options: Partial<AddTorrentOptions> = {}) {
+  async addTorrent(torrent: string | Buffer, options: Partial<AddTorrentOptions> = {}) {
     const args: AddTorrentOptions = {
       'download-dir': '/downloads',
       paused: false,
       ...options,
     };
 
-    const file = fs.readFileSync(filePath);
-    args.metainfo = Buffer.from(file).toString('base64');
-
+    if (typeof torrent === 'string') {
+      if (fs.existsSync(torrent)) {
+        args.metainfo = Buffer.from(fs.readFileSync(torrent)).toString('base64');
+      } else {
+        args.metainfo = Buffer.from(torrent, 'base64').toString('base64');
+      }
+    } else {
+      args.metainfo = torrent.toString('base64');
+    }
     const res = await this.request<AddTorrentResponse>('torrent-add', args);
     return res.body;
   }

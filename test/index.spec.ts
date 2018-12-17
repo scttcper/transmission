@@ -1,6 +1,8 @@
-import path from 'path';
-import { Transmission } from '../src/index';
+import fs from 'fs';
 import pWaitFor from 'p-wait-for';
+import path from 'path';
+
+import { Transmission } from '../src/index';
 
 const baseURL = 'http://localhost:9091/';
 const torrentFile = path.join(__dirname + '/ubuntu-18.04.1-desktop-amd64.iso.torrent');
@@ -12,7 +14,7 @@ async function setupTorrent(transmission: Transmission) {
       const r = await transmission.listTorrents(undefined, ['id']);
       return r.arguments.torrents.length === 1;
     },
-    { timeout: 10000, interval: 10000 },
+    { timeout: 10000, interval: 200 },
   );
   return res.arguments['torrent-added'].id;
 }
@@ -21,8 +23,8 @@ describe('Transmission', () => {
   afterEach(async () => {
     const transmission = new Transmission({ baseURL });
     const res = await transmission.listTorrents();
+    // clean up all torrents
     for (const torrent of res.arguments.torrents) {
-      // clean up all torrents
       await transmission.removeTorrent(torrent.id, false);
     }
   });
@@ -30,9 +32,20 @@ describe('Transmission', () => {
     const transmission = new Transmission({ baseURL });
     expect(transmission).toBeTruthy();
   });
-  it('should add torrent', async () => {
+  it('should add torrent from file path string', async () => {
     const transmission = new Transmission({ baseURL });
     const res = await transmission.addTorrent(torrentFile);
+    expect(res.result).toBe('success');
+  });
+  it('should add torrent from file buffer', async () => {
+    const transmission = new Transmission({ baseURL });
+    const res = await transmission.addTorrent(fs.readFileSync(torrentFile));
+    expect(res.result).toBe('success');
+  });
+  it('should add torrent from file contents base64', async () => {
+    const transmission = new Transmission({ baseURL });
+    const contents = Buffer.from(fs.readFileSync(torrentFile)).toString('base64');
+    const res = await transmission.addTorrent(contents);
     expect(res.result).toBe('success');
   });
   it('should get torrents', async () => {
