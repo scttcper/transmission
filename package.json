@@ -35,7 +35,7 @@
     "@types/node": "10.12.18",
     "@types/p-wait-for": "2.0.0",
     "jest": "23.6.0",
-    "microbundle": "0.7.0",
+    "microbundle": "0.9.0",
     "p-wait-for": "2.0.1",
     "prettier": "1.15.3",
     "rimraf": "2.6.2",
