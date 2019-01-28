@@ -93,7 +93,11 @@ export class Transmission {
   }
 
   async moveTorrent(ids: TorrentIds, location: string) {
-    const res = await this.request<DefaultResponse>("torrent-set-location", { ids, move: true, location });
+    const res = await this.request<DefaultResponse>('torrent-set-location', {
+      ids,
+      move: true,
+      location,
+    });
     return res.body;
   }
 
@@ -120,11 +124,9 @@ export class Transmission {
     };
 
     if (typeof torrent === 'string') {
-      if (fs.existsSync(torrent)) {
-        args.metainfo = Buffer.from(fs.readFileSync(torrent)).toString('base64');
-      } else {
-        args.metainfo = Buffer.from(torrent, 'base64').toString('base64');
-      }
+      args.metainfo = fs.existsSync(torrent)
+        ? Buffer.from(fs.readFileSync(torrent)).toString('base64')
+        : Buffer.from(torrent, 'base64').toString('base64');
     } else {
       args.metainfo = torrent.toString('base64');
     }

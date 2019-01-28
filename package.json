@@ -9,16 +9,14 @@
     "transmission",
     "typescript"
   ],
-  "source": "src/index.ts",
-  "main": "./transmission.js",
-  "module": "./transmission.m.js",
+  "main": "./src/index.js",
   "typings": "./src/index.d.ts",
   "sideEffects": false,
   "scripts": {
     "lint": "tslint -t stylish -p .",
     "lint:fix": "tslint -p tsconfig.json -t stylish --fix 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
-    "build": "microbundle build --target node --format cjs,es -o dist",
+    "build": "tsc -p tsconfig.json",
     "postbuild": "cp package.json dist && cp LICENSE dist && cp README.md dist && rimraf dist/test",
     "build:docs": "typedoc --out docs --target es6 --theme minimal --mode file src && touch docs/.nojekyll",
     "test": "jest",
@@ -27,26 +25,25 @@
     "semantic-release": "cd dist && semantic-release"
   },
   "dependencies": {
-    "got": "9.5.0"
+    "got": "9.6.0"
   },
   "devDependencies": {
-    "@types/got": "9.2.2",
-    "@types/jest": "23.3.11",
+    "@types/got": "9.4.0",
+    "@types/jest": "23.3.13",
     "@types/node": "10.12.18",
     "@types/p-wait-for": "2.0.0",
-    "jest": "23.6.0",
-    "microbundle": "0.9.0",
+    "jest": "24.0.0",
     "p-wait-for": "2.0.1",
-    "prettier": "1.15.3",
-    "rimraf": "2.6.2",
-    "semantic-release": "15.13.2",
+    "prettier": "1.16.1",
+    "rimraf": "2.6.3",
+    "semantic-release": "15.13.3",
     "ts-jest": "23.10.5",
-    "ts-node": "7.0.1",
-    "tslint": "5.12.0",
+    "ts-node": "8.0.2",
+    "tslint": "5.12.1",
     "tslint-config-prettier": "1.17.0",
-    "tslint-xo": "0.11.0",
-    "typedoc": "0.13.0",
-    "typescript": "3.2.2"
+    "tslint-xo": "0.13.0",
+    "typedoc": "0.14.2",
+    "typescript": "3.2.4"
   },
   "release": {
     "branch": "master"

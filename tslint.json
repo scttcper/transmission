@@ -7,6 +7,8 @@
     "semicolon": [true, "always"],
     "comment-format": false,
     "no-http-string": false,
-    "no-banned-terms": false
+    "no-banned-terms": false,
+    "typedef": false,
+    "no-unsafe-any": false
   }
 }
