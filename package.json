@@ -34,7 +34,7 @@
     "@types/p-wait-for": "2.0.0",
     "jest": "24.0.0",
     "p-wait-for": "2.0.1",
-    "prettier": "1.16.1",
+    "prettier": "1.16.3",
     "rimraf": "2.6.3",
     "semantic-release": "15.13.3",
     "ts-jest": "23.10.5",
