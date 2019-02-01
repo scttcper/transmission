@@ -30,7 +30,7 @@
   "devDependencies": {
     "@types/got": "9.4.0",
     "@types/jest": "23.3.13",
-    "@types/node": "10.12.18",
+    "@types/node": "10.12.19",
     "@types/p-wait-for": "2.0.0",
     "jest": "24.0.0",
     "p-wait-for": "2.0.1",
