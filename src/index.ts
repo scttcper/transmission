@@ -28,6 +28,7 @@ const defaults: TramissionConfig = {
 
 export class Transmission {
   config: TramissionConfig;
+
   sessionId?: string;
 
   constructor(options: Partial<TramissionConfig> = {}) {
@@ -124,12 +125,13 @@ export class Transmission {
     };
 
     if (typeof torrent === 'string') {
-      args.metainfo = fs.existsSync(torrent)
-        ? Buffer.from(fs.readFileSync(torrent)).toString('base64')
-        : Buffer.from(torrent, 'base64').toString('base64');
+      args.metainfo = fs.existsSync(torrent) ?
+        Buffer.from(fs.readFileSync(torrent)).toString('base64') :
+        Buffer.from(torrent, 'base64').toString('base64');
     } else {
       args.metainfo = torrent.toString('base64');
     }
+
     const res = await this.request<AddTorrentResponse>('torrent-add', args);
     return res.body;
   }
@@ -170,6 +172,7 @@ export class Transmission {
     if (ids) {
       args.ids = ids;
     }
+
     const res = await this.request<GetTorrentRepsonse>('torrent-get', args);
     return res.body;
   }
@@ -178,6 +181,7 @@ export class Transmission {
     if (!this.sessionId && method !== 'session-get') {
       await this.getSession();
     }
+
     const headers: any = {
       'X-Transmission-Session-Id': this.sessionId,
     };
@@ -185,6 +189,7 @@ export class Transmission {
       const auth = this.config.username + (this.config.password ? `:${this.config.password}` : '');
       headers.Authorization = 'Basic ' + Buffer.from(auth).toString('base64');
     }
+
     const url = resolve(this.config.baseURL, this.config.path);
     try {
       return await got.post(url, {
@@ -200,6 +205,7 @@ export class Transmission {
         this.sessionId = error.response.headers['x-transmission-session-id'];
         return this.request<T>(method, args);
       }
+
       throw error;
     }
   }
