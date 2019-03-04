@@ -19,9 +19,9 @@
     "build": "tsc -p tsconfig.json",
     "postbuild": "cp package.json dist && cp LICENSE dist && cp README.md dist",
     "build:docs": "typedoc --out docs --target es6 --theme minimal --mode file src && touch docs/.nojekyll",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:ci": "jest --coverage --no-cache",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watch --runInBand",
+    "test:ci": "jest --coverage --no-cache --runInBand",
     "semantic-release": "cd dist && semantic-release"
   },
   "dependencies": {

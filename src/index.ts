@@ -14,6 +14,8 @@ import {
 import { TorrentSettings } from '@ctrl/shared-torrent';
 
 const defaults: Partial<TorrentSettings> = {
+  host: 'localhost',
+  port: 9091,
   path: '/transmission/rpc',
   username: '',
   password: '',
@@ -172,7 +174,11 @@ export class Transmission {
 
   async request<T extends object>(method: string, args: any = {}): Promise<Response<T>> {
     if (!this.sessionId && method !== 'session-get') {
-      await this.getSession();
+      try {
+        await this.getSession();
+      } catch {
+        throw new Error('Failed to get session');
+      }
     }
 
     const headers: any = {
