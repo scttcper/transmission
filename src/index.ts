@@ -1,4 +1,4 @@
-import { resolve, URL } from 'url';
+import { resolve } from 'url';
 import got, { Response, GotJSONOptions } from 'got';
 import fs from 'fs';
 import {
@@ -13,16 +13,16 @@ import {
 } from './types';
 import { TorrentSettings } from '@ctrl/shared-torrent';
 
-const defaults: Partial<TorrentSettings> = {
-  host: 'localhost',
-  port: 9091,
+const defaults: TorrentSettings = {
+  baseUrl: 'http://localhost:9091/',
   path: '/transmission/rpc',
   username: '',
   password: '',
+  timeout: 5000,
 };
 
 export class Transmission {
-  config: Partial<TorrentSettings>;
+  config: TorrentSettings;
 
   sessionId?: string;
 
@@ -174,11 +174,7 @@ export class Transmission {
 
   async request<T extends object>(method: string, args: any = {}): Promise<Response<T>> {
     if (!this.sessionId && method !== 'session-get') {
-      try {
-        await this.getSession();
-      } catch {
-        throw new Error('Failed to get session');
-      }
+      await this.getSession();
     }
 
     const headers: any = {
@@ -193,23 +189,23 @@ export class Transmission {
       headers.Authorization = 'Basic ' + Buffer.from(auth).toString('base64');
     }
 
-    const baseUrl = new URL(this.config.host as string);
-    if (this.config.port) {
-      baseUrl.port = `${this.config.port}`;
-    }
-
-    const url = resolve(baseUrl.toString(), this.config.path as string);
+    const url = resolve(this.config.baseUrl, this.config.path);
     const options: GotJSONOptions = {
       body: {
         method,
         arguments: args,
       },
       headers,
+      retry: 0,
       json: true,
     };
     // allow proxy agent
     if (this.config.agent) {
       options.agent = this.config.agent;
+    }
+
+    if (this.config.timeout) {
+      options.timeout = this.config.timeout;
     }
 
     try {

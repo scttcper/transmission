@@ -25,7 +25,7 @@
     "semantic-release": "cd dist && semantic-release"
   },
   "dependencies": {
-    "@ctrl/shared-torrent": "^1.0.1",
+    "@ctrl/shared-torrent": "^1.0.3",
     "got": "^9.6.0"
   },
   "devDependencies": {
