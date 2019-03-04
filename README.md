@@ -14,7 +14,7 @@ npm install @ctrl/transmission
 import { Transmission } from '@ctrl/transmission';
 
 const transmission = new Transmission({
-  baseURL: 'http://localhost:9091/',
+  baseUrl: 'http://localhost:9091/',
   password: '',
 });
 
