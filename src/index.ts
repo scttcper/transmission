@@ -112,7 +112,7 @@ export class Transmission {
    * Adding a torrent
    * @param torrent a string of file path or contents of the file as base64 string
    */
-  async addTorrent(torrent: string | Buffer, options: Partial<AddTorrentOptions> = {}) {
+  async addTorrent(torrent: string | Buffer, options: Partial<AddTorrentOptions> = {}): Promise<AddTorrentResponse> {
     const args: AddTorrentOptions = {
       'download-dir': '/downloads',
       paused: false,

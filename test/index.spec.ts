@@ -4,7 +4,7 @@ import path from 'path';
 
 import { Transmission } from '../src/index';
 
-const baseUrl = 'localhost';
+const baseUrl = 'http://localhost:9091/';
 const torrentFile = path.join(__dirname, '/ubuntu-18.04.1-desktop-amd64.iso.torrent');
 
 async function setupTorrent(transmission: Transmission) {
