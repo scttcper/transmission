@@ -1,5 +1,5 @@
-import { resolve } from 'url';
-import got, { Response } from 'got';
+import { resolve, URL } from 'url';
+import got, { Response, GotJSONOptions } from 'got';
 import fs from 'fs';
 import {
   AddTorrentOptions,
@@ -11,27 +11,20 @@ import {
   DefaultResponse,
   FreeSpaceResponse,
 } from './types';
+import { TorrentSettings } from '@ctrl/shared-torrent';
 
-export interface TramissionConfig {
-  baseURL: string;
-  path: string;
-  username: string;
-  password: string;
-}
-
-const defaults: TramissionConfig = {
-  baseURL: 'http://localhost:9091/',
+const defaults: Partial<TorrentSettings> = {
   path: '/transmission/rpc',
   username: '',
   password: '',
 };
 
 export class Transmission {
-  config: TramissionConfig;
+  config: Partial<TorrentSettings>;
 
   sessionId?: string;
 
-  constructor(options: Partial<TramissionConfig> = {}) {
+  constructor(options: Partial<TorrentSettings> = {}) {
     this.config = { ...defaults, ...options };
   }
 
@@ -186,20 +179,35 @@ export class Transmission {
       'X-Transmission-Session-Id': this.sessionId,
     };
     if (this.config.username || this.config.password) {
-      const auth = this.config.username + (this.config.password ? `:${this.config.password}` : '');
+      let auth = this.config.username || '';
+      if (this.config.password) {
+        auth = `${this.config.username}:${this.config.password}`;
+      }
+
       headers.Authorization = 'Basic ' + Buffer.from(auth).toString('base64');
     }
 
-    const url = resolve(this.config.baseURL, this.config.path);
+    const baseUrl = new URL(this.config.host as string);
+    if (this.config.port) {
+      baseUrl.port = `${this.config.port}`;
+    }
+
+    const url = resolve(baseUrl.toString(), this.config.path as string);
+    const options: GotJSONOptions = {
+      body: {
+        method,
+        arguments: args,
+      },
+      headers,
+      json: true,
+    };
+    // allow proxy agent
+    if (this.config.agent) {
+      options.agent = this.config.agent;
+    }
+
     try {
-      return await got.post(url, {
-        json: true,
-        body: {
-          method,
-          arguments: args,
-        },
-        headers,
-      });
+      return await got.post(url, options);
     } catch (error) {
       if (error.response && error.response.statusCode === 409) {
         this.sessionId = error.response.headers['x-transmission-session-id'];

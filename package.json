@@ -25,7 +25,8 @@
     "semantic-release": "cd dist && semantic-release"
   },
   "dependencies": {
-    "got": "9.6.0"
+    "@ctrl/shared-torrent": "^1.0.1",
+    "got": "^9.6.0"
   },
   "devDependencies": {
     "@types/got": "9.4.1",
@@ -47,6 +48,9 @@
     "ts-jest": "24.0.0",
     "typedoc": "0.14.2",
     "typescript": "3.3.3333"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "release": {
     "branch": "master"
