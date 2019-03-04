@@ -1,4 +1,4 @@
-import { resolve } from 'url';
+import urlJoin from 'url-join';
 import got, { Response, GotJSONOptions } from 'got';
 import fs from 'fs';
 import {
@@ -189,7 +189,7 @@ export class Transmission {
       headers.Authorization = 'Basic ' + Buffer.from(auth).toString('base64');
     }
 
-    const url = resolve(this.config.baseUrl, this.config.path);
+    const url = urlJoin(this.config.baseUrl, this.config.path);
     const options: GotJSONOptions = {
       body: {
         method,
