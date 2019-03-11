@@ -5,6 +5,7 @@ import path from 'path';
 import { Transmission } from '../src/index';
 
 const baseUrl = 'http://localhost:9091/';
+const torrentName = 'ubuntu-18.04.1-desktop-amd64.iso';
 const torrentFile = path.join(__dirname, '/ubuntu-18.04.1-desktop-amd64.iso.torrent');
 
 async function setupTorrent(transmission: Transmission) {
@@ -53,6 +54,19 @@ describe('Transmission', () => {
     await setupTorrent(transmission);
     const res = await transmission.listTorrents(undefined, ['id']);
     expect(res.arguments.torrents).toHaveLength(1);
+  });
+  it('should get normalized all torrent data', async () => {
+    const transmission = new Transmission({ baseUrl });
+    await setupTorrent(transmission);
+    const res = await transmission.getAllData();
+    expect(res.torrents).toHaveLength(1);
+    expect(res.torrents[0].name).toBe(torrentName);
+  });
+  it('should get normalized torrent data', async () => {
+    const transmission = new Transmission({ baseUrl });
+    const id = await setupTorrent(transmission);
+    const res = await transmission.getTorrent(id);
+    expect(res.name).toBe(torrentName);
   });
   it('should remove torrent', async () => {
     const transmission = new Transmission({ baseUrl });
