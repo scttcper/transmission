@@ -14,5 +14,6 @@ module.exports = {
     'no-mixed-operators': 0,
     'no-await-in-loop': 0,
     '@typescript-eslint/camelcase': 0,
+    '@typescript-eslint/promise-function-async': 0,
   },
 };

@@ -56,31 +56,150 @@ export interface GetTorrentRepsonse extends DefaultResponse {
 }
 
 export interface Torrent {
-  downloadDir: string;
-  error: number;
-  errorString: string;
-  eta: number;
   id: number;
+  name: string;
+  downloadDir: string;
+  /**
+   * When the torrent was first added
+   */
+  addedDate: number;
+  /**
+   * When the torrent finished downloading.
+   */
+  doneDate: number;
+  comment: string;
+  /**
+   * Defines what kind of text is in errorString.
+   */
+  error: number;
+  /**
+   * A warning or error message regarding the torrent.
+   */
+  errorString: string;
+  /**
+   * If downloading, estimated number of seconds left until the torrent is done.
+   * If seeding, estimated number of seconds left until seed ratio is reached.
+   */
+  eta: number;
+  /**
+   * If seeding, number of seconds left until the idle time limit is reached.
+   */
+  etaIdle: number;
   isFinished: boolean;
+  isDownloading: boolean;
+  isPrivate: boolean;
+  /**
+   * True if the torrent is running, but has been idle for long enough to be considered stalled.
+   */
   isStalled: boolean;
+  /**
+   * Byte count of how much data is left to be downloaded until we've got all the pieces that we want.
+   */
   leftUntilDone: number;
+  magnetLink: string;
+  /**
+   * How much of the metadata the torrent has. For torrents added from a .torrent this will always be 1. For magnet links, this number will from from 0 to 1 as the metadata is downloaded.
+   */
   metadataPercentComplete: number;
+  peers: Peers[];
+  peersFrom: PeersFrom[];
+  priorities: number[];
+  wanted: number[];
+  webseeds: string[];
+  /**
+   * Number of peers that we're connected to
+   */
   peersConnected: number;
+  /**
+   * Number of peers that we're sending data to
+   */
   peersGettingFromUs: number;
+  /**
+   * Number of peers that are sending data to us.
+   */
   peersSendingToUs: number;
+  /**
+   * How much has been downloaded of the files the user wants. This differs from percentComplete if the user wants only some of the torrent's files. Range is [0..1]
+   */
   percentDone: number;
+  /**
+   * This torrent's queue position. All torrents have a queue position, even if it's not queued.
+   */
   queuePosition: number;
   rateDownload: number;
   rateUpload: number;
   recheckProgress: number;
   seedRatioLimit: number;
+  seedIdleLimit: number;
   seedRatioMode: number;
   sizeWhenDone: number;
+  totalSize: number;
   status: number;
   trackers: Tracker[];
+  files: FileStats[];
+  fileStats: FileStats[];
+  hashString: string;
+  creator: string;
+  /**
+   * Byte count of all the piece data we want and don't have yet, but that a connected peer does have.
+   */
+  desiredAvailable: string;
   uploadRatio: number;
+  /**
+   * Byte count of all data you've ever uploaded for this torrent.
+   */
   uploadedEver: number;
+  /**
+   * Byte count of all the non-corrupt data you've ever downloaded for this torrent. If you deleted the files and downloaded a second time, this will be 2*totalSize.
+   */
+  downloadedEver: number;
+  /**
+   * Byte count of all the corrupt data you've ever downloaded for this torrent. If you're on a poisoned torrent, this number can grow very large.
+   */
+  downloadLimit: number;
+  downloadLimited: boolean;
+  corruptEver: number;
+  /**
+   * Number of webseeds that are sending data to us.
+   */
   webseedsSendingToUs: number;
+  /**
+   * Byte count of all the partial piece data we have for this torrent. As pieces become complete, this value may decrease as portions of it are moved to 'corrupt' or 'haveValid'.
+   */
+  haveUnchecked: number;
+  haveValid: number;
+  honorsSessionLimits: boolean;
+  labels: string[];
+  /**
+   * time when one or more of the torrent's trackers will allow you to manually ask for more peers, or 0 if you can't
+   */
+  manualAnnounceTime: number;
+  maxConnectedPeers: number;
+  /**
+   * Cumulative seconds the torrent's ever spent downloading
+   */
+  secondsDownloading: number;
+  /**
+   * Cumulative seconds the torrent's ever spent seeding
+   */
+  secondsSeeding: number;
+  /**
+   * The last time we uploaded or downloaded piece data on this torrent.
+   */
+  activityDate: number;
+  'peer-limit': number;
+}
+
+export interface FileStats {
+  bytesCompleted: number;
+  priority: number;
+  wanted: boolean;
+}
+
+export interface Files {
+  bytesCompleted: number;
+  length: number;
+  name: string;
 }
 
 export interface Tracker {
@@ -88,6 +207,35 @@ export interface Tracker {
   id: number;
   scrape: string;
   tier: number;
+}
+
+export interface Peers {
+  address: string;
+  clientName: string;
+  clientIsChoked: boolean;
+  clientIsInterested: boolean;
+  flagStr: string;
+  isDownloadingFrom: boolean;
+  isEncrypted: boolean;
+  isIncoming: boolean;
+  isUploadingTo: boolean;
+  isUTP: boolean;
+  peerIsChoked: boolean;
+  peerIsInterested: boolean;
+  port: number;
+  progress: number;
+  rateToClient: number;
+  rateToPeer: number;
+}
+
+export interface PeersFrom {
+  fromCache: number;
+  fromDht: number;
+  fromIncoming: number;
+  fromLpd: number;
+  fromLtep: number;
+  fromPex: number;
+  fromTracker: number;
 }
 
 export interface SessionArguments {
