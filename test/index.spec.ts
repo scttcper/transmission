@@ -3,6 +3,7 @@ import pWaitFor from 'p-wait-for';
 import path from 'path';
 
 import { Transmission } from '../src/index';
+import { TorrentState } from '@ctrl/shared-torrent';
 
 const baseUrl = 'http://localhost:9091/';
 const torrentName = 'ubuntu-18.04.1-desktop-amd64.iso';
@@ -93,5 +94,33 @@ describe('Transmission', () => {
     expect(res.result).toBe('success');
     expect(res.arguments.path).toBe(p);
     expect(typeof res.arguments['size-bytes']).toBe('number');
+  });
+  it('should add torrent with normalized response', async () => {
+    const client = new Transmission({ baseUrl });
+
+    const torrent = await client.normalizedAddTorrent(fs.readFileSync(torrentFile), {
+      label: 'test',
+    });
+    expect(torrent.connectedPeers).toBe(0);
+    expect(torrent.connectedSeeds).toBe(0);
+    expect(torrent.downloadSpeed).toBe(0);
+    expect(torrent.eta).toBe(-1);
+    expect(torrent.isCompleted).toBe(false);
+    // TODO: labels should be working in transmission 3.0
+    expect(torrent.label).toBe(undefined);
+    expect(torrent.name).toBe(torrentName);
+    expect(torrent.progress).toBeGreaterThanOrEqual(0);
+    expect(torrent.queuePosition).toBe(0);
+    expect(torrent.ratio).toBe(0);
+    expect(torrent.savePath).toBe('/downloads');
+    expect(torrent.state).toBe(TorrentState.checking);
+    expect(torrent.stateMessage).toBe('');
+    expect(torrent.totalDownloaded).toBe(0);
+    expect(torrent.totalPeers).toBe(0);
+    expect(torrent.totalSeeds).toBe(0);
+    expect(torrent.totalSelected).toBe(1953349632);
+    // expect(torrent.totalSize).toBe(undefined);
+    expect(torrent.totalUploaded).toBe(0);
+    expect(torrent.uploadSpeed).toBe(0);
   });
 });

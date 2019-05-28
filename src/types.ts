@@ -46,7 +46,7 @@ export interface FreeSpaceResponse extends DefaultResponse {
  * (2) a list of torrent id numbers, sha1 hash strings, or both
  * (3) a string, "recently-active", for recently-active torrents
  */
-export type TorrentIds = number | 'recently-active' | (number | string)[];
+export type TorrentIds = number | 'recently-active' | Array<number | string>;
 
 export interface GetTorrentRepsonse extends DefaultResponse {
   arguments: {
@@ -456,4 +456,99 @@ export interface Units {
    * 4 strings: KB/s, MB/s, GB/s, TB/s
    */
   'speed-units': string[];
+}
+
+export interface SetTorrentOptions {
+  /**
+   * this torrent's bandwidth tr_priority_t
+   */
+  bandwidthPriority: number;
+  /**
+   * maximum download speed (KBps)
+   */
+  downloadLimit: number;
+  /**
+   * true if "downloadLimit" is honored
+   */
+  downloadLimited: boolean;
+  /**
+   * indices of file(s) to download
+   */
+  'files-wanted': number[];
+  /**
+   * indices of file(s) to not download
+   */
+  'files-unwanted': number[];
+  /**
+   * true if session upload limits are honored
+   */
+  honorsSessionLimits: boolean;
+  /**
+   * torrent list, as described in 3.1
+   */
+  ids: TorrentIds;
+  /**
+   * array of string labels
+   */
+  labels: string[];
+  /**
+   * new location of the torrent's content
+   */
+  location: string;
+  /**
+   * maximum number of peers
+   */
+  'peer-limit': number;
+  /**
+   * indices of high-priority file(s)
+   */
+  'priority-high': number[];
+  /**
+   * indices of low-priority file(s)
+   */
+  'priority-low': number[];
+  /**
+   * indices of normal-priority file(s)
+   */
+  'priority-normal': number[];
+  /**
+   * position of this torrent in its queue [0...n)
+   */
+  queuePosition: number;
+  /**
+   * torrent-level number of minutes of seeding inactivity
+   */
+  seedIdleLimit: number;
+  /**
+   * which seeding inactivity to use.  See tr_idlelimit
+   */
+  seedIdleMode: number;
+  /**
+   * torrent-level seeding ratio
+   */
+  seedRatioLimit: number;
+  /**
+   * which ratio to use.  See tr_ratiolimit
+   */
+  seedRatioMode: number;
+  /**
+   * strings of announce URLs to add
+   */
+  trackerAdd: string[];
+  /**
+   * ids of trackers to remove
+   */
+  trackerRemove: number[];
+  /**
+   * pairs of <trackerId/new announce URLs>
+   */
+  trackerReplace: any[];
+  /**
+   * maximum upload speed (KBps)
+   */
+  uploadLimit: number;
+  /**
+   * true if "uploadLimit" is honored
+   */
+  uploadLimited: boolean;
 }

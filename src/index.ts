@@ -5,6 +5,7 @@ import {
   TorrentSettings,
   TorrentState,
   Label,
+  AddTorrentOptions as NormalizedAddTorrentOptions,
 } from '@ctrl/shared-torrent';
 import fs from 'fs';
 import got, { GotJSONOptions, Response } from 'got';
@@ -20,6 +21,7 @@ import {
   SessionResponse,
   Torrent,
   TorrentIds,
+  SetTorrentOptions,
 } from './types';
 
 const defaults: TorrentSettings = {
@@ -107,6 +109,15 @@ export class Transmission implements TorrentClient {
   }
 
   /**
+   * Torrent Mutators
+   */
+  async setTorrent(ids: TorrentIds, options: Partial<SetTorrentOptions> = {}) {
+    options.ids = ids;
+    const res = await this.request<DefaultResponse>('torrent-stop', options);
+    return res.body;
+  }
+
+  /**
    * Removing a Torrent
    */
   async removeTorrent(ids: TorrentIds, removeData = true) {
@@ -141,6 +152,30 @@ export class Transmission implements TorrentClient {
 
     const res = await this.request<AddTorrentResponse>('torrent-add', args);
     return res.body;
+  }
+
+  async normalizedAddTorrent(
+    torrent: string | Buffer,
+    options: Partial<NormalizedAddTorrentOptions> = {},
+  ): Promise<NormalizedTorrent> {
+    const torrentOptions: Partial<AddTorrentOptions> = {};
+    if (options.startPaused) {
+      torrentOptions.paused = true;
+    }
+
+    if (!Buffer.isBuffer(torrent)) {
+      torrent = Buffer.from(torrent);
+    }
+
+    const res = await this.addTorrent(torrent, torrentOptions);
+    const torrentId = res.arguments['torrent-added'].id;
+
+    if (options.label) {
+      const res = await this.setTorrent(torrentId, { labels: [options.label] });
+      console.log(res);
+    }
+
+    return this.getTorrent(torrentId);
   }
 
   async getTorrent(id: TorrentIds): Promise<NormalizedTorrent> {

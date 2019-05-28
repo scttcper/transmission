@@ -26,7 +26,8 @@ async function main() {
 
 ### Api
 
-Docs: https://typectrl.github.io/transmission/classes/transmission.html
+Docs: https://ctrl-transmission.netlify.com/  
+API Docs: https://github.com/transmission/transmission/blob/master/extras/rpc-spec.txt  
 
 ### Normalized API
 These functions have been normalized between torrent clients. Can easily support multiple torrent clients. See below for alternative supported torrent clients

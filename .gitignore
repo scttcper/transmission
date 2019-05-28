@@ -34,3 +34,4 @@ build
 docs
 dist
 .rpt2
+yarn.lock
