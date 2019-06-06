@@ -72,7 +72,7 @@ console.log(res);
 ```
 
 ### See Also
-All of the following clients provide implement the same interface.  
+All of the following npm modules provide the same normalized functions along with supporting the unique apis for each client.  
 
 deluge - https://github.com/typectrl/deluge  
 qbittorrent - https://github.com/TypeCtrl/qbittorrent  
