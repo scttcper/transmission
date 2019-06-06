@@ -72,7 +72,8 @@ console.log(res);
 ```
 
 ### See Also
-All of the following clients provide implement the same interface.
+All of the following clients provide implement the same interface.  
+
 deluge - https://github.com/typectrl/deluge  
 qbittorrent - https://github.com/TypeCtrl/qbittorrent  
 utorrent - https://github.com/TypeCtrl/utorrent  
