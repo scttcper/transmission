@@ -300,12 +300,8 @@ export class Transmission implements TorrentClient {
       'X-Transmission-Session-Id': this.sessionId,
     };
     if (this.config.username || this.config.password) {
-      let auth = this.config.username || '';
-      if (this.config.password) {
-        auth = `${this.config.username}:${this.config.password}`;
-      }
-
-      headers.Authorization = 'Basic ' + Buffer.from(auth).toString('base64');
+      const str = `${this.config.username || ''}:${this.config.password || ''}`;
+      headers.Authorization = 'Basic ' + str;
     }
 
     const url = urlJoin(this.config.baseUrl, this.config.path);
