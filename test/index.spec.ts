@@ -30,7 +30,7 @@ describe('Transmission', () => {
       await transmission.removeTorrent(torrent.id, false);
     }
   });
-  it('should be instantiable', async () => {
+  it('should be instantiable', () => {
     const transmission = new Transmission({ baseUrl });
     expect(transmission).toBeTruthy();
   });

@@ -16,8 +16,8 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "lint": "eslint src/**/*.ts test/**/*.ts",
-    "lint:fix": "eslint --fix src/**/*.ts test/**/*.ts",
+    "lint": "eslint --ext .js,.ts, .",
+    "lint:fix": "eslint --fix --ext .js,.ts, .",
     "prepare": "npm run build",
     "build": "tsc -p tsconfig.build.json",
     "build:docs": "typedoc --out docs --target es6 --theme minimal --mode file src && touch docs/.nojekyll",
