@@ -34,7 +34,7 @@
   "devDependencies": {
     "@types/got": "9.6.9",
     "@types/jest": "24.0.23",
-    "@types/node": "12.12.3",
+    "@types/node": "12.12.14",
     "@types/url-join": "4.0.0",
     "@typescript-eslint/eslint-plugin": "2.6.0",
     "@typescript-eslint/parser": "2.6.0",
