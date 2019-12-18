@@ -113,7 +113,7 @@ export class Transmission implements TorrentClient {
    */
   async setTorrent(ids: TorrentIds, options: Partial<SetTorrentOptions> = {}) {
     options.ids = ids;
-    const res = await this.request<DefaultResponse>('torrent-stop', options);
+    const res = await this.request<DefaultResponse>('torrent-set', options);
     return res.body;
   }
 
