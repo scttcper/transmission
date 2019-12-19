@@ -22,6 +22,7 @@ import {
   Torrent,
   TorrentIds,
   SetTorrentOptions,
+  RenamePathOptions,
 } from './types';
 
 const defaults: TorrentSettings = {
@@ -116,6 +117,16 @@ export class Transmission implements TorrentClient {
     const res = await this.request<DefaultResponse>('torrent-stop', options);
     return res.body;
   }
+
+  /**
+   * Renaming a Torrent's Path
+   */
+  async renamePath(ids: TorrentIds, options: Partial<RenamePathOptions> = {}) {
+    options.ids = ids;
+    const res = await this.request<DefaultResponse>('torrent-rename-path', options);
+    return res.body;
+  }
+
 
   /**
    * Removing a Torrent
