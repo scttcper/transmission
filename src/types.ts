@@ -552,3 +552,19 @@ export interface SetTorrentOptions {
    */
   uploadLimited: boolean;
 }
+
+export interface RenamePathOptions {
+  /**
+   * torrent list, as described in 3.1
+   */
+  ids: TorrentIds;
+  /**
+   * the path to the file or folder that will be renamed
+   */
+  path: string;
+  /**
+   * the file or folder's new name
+   */
+  name: string;
+}
+
