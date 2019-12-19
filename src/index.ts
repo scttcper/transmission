@@ -42,52 +42,52 @@ export class Transmission implements TorrentClient {
     this.config = { ...defaults, ...options };
   }
 
-  async getSession() {
+  async getSession(): Promise<SessionResponse> {
     const res = await this.request<SessionResponse>('session-get');
     return res.body;
   }
 
-  async setSession(args: Partial<SessionArguments>) {
+  async setSession(args: Partial<SessionArguments>): Promise<SessionResponse> {
     const res = await this.request<SessionResponse>('session-set', args);
     return res.body;
   }
 
-  async queueTop(ids: TorrentIds) {
+  async queueTop(ids: TorrentIds): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('queue-move-top', { ids });
     return res.body;
   }
 
-  async queueBottom(ids: TorrentIds) {
+  async queueBottom(ids: TorrentIds): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('queue-move-bottom', { ids });
     return res.body;
   }
 
-  async queueUp(ids: TorrentIds) {
+  async queueUp(ids: TorrentIds): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('queue-move-up', { ids });
     return res.body;
   }
 
-  async queueDown(ids: TorrentIds) {
+  async queueDown(ids: TorrentIds): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('queue-move-down', { ids });
     return res.body;
   }
 
-  async freeSpace(path = '/downloads/complete') {
+  async freeSpace(path = '/downloads/complete'): Promise<FreeSpaceResponse> {
     const res = await this.request<FreeSpaceResponse>('free-space', { path });
     return res.body;
   }
 
-  async pauseTorrent(ids: TorrentIds) {
+  async pauseTorrent(ids: TorrentIds): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('torrent-stop', { ids });
     return res.body;
   }
 
-  async resumeTorrent(ids: TorrentIds) {
+  async resumeTorrent(ids: TorrentIds): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('torrent-start', { ids });
     return res.body;
   }
 
-  async verifyTorrent(ids: TorrentIds) {
+  async verifyTorrent(ids: TorrentIds): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('torrent-verify', { ids });
     return res.body;
   }
@@ -95,12 +95,12 @@ export class Transmission implements TorrentClient {
   /**
    * ask tracker for more peers
    */
-  async reannounceTorrent(ids: TorrentIds) {
+  async reannounceTorrent(ids: TorrentIds): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('torrent-reannounce', { ids });
     return res.body;
   }
 
-  async moveTorrent(ids: TorrentIds, location: string) {
+  async moveTorrent(ids: TorrentIds, location: string): Promise<DefaultResponse> {
     const res = await this.request<DefaultResponse>('torrent-set-location', {
       ids,
       move: true,
@@ -112,7 +112,7 @@ export class Transmission implements TorrentClient {
   /**
    * Torrent Mutators
    */
-  async setTorrent(ids: TorrentIds, options: Partial<SetTorrentOptions> = {}) {
+  async setTorrent(ids: TorrentIds, options: Partial<SetTorrentOptions> = {}): Promise<DefaultResponse> {
     options.ids = ids;
     const res = await this.request<DefaultResponse>('torrent-set', options);
     return res.body;
@@ -121,17 +121,16 @@ export class Transmission implements TorrentClient {
   /**
    * Renaming a Torrent's Path
    */
-  async renamePath(ids: TorrentIds, options: Partial<RenamePathOptions> = {}) {
+  async renamePath(ids: TorrentIds, options: Partial<RenamePathOptions> = {}): Promise<DefaultResponse> {
     options.ids = ids;
     const res = await this.request<DefaultResponse>('torrent-rename-path', options);
     return res.body;
   }
 
-
   /**
    * Removing a Torrent
    */
-  async removeTorrent(ids: TorrentIds, removeData = true) {
+  async removeTorrent(ids: TorrentIds, removeData = true): Promise<AddTorrentResponse> {
     const res = await this.request<AddTorrentResponse>('torrent-remove', {
       ids,
       'delete-local-data': removeData,
@@ -311,7 +310,7 @@ export class Transmission implements TorrentClient {
       'X-Transmission-Session-Id': this.sessionId,
     };
     if (this.config.username || this.config.password) {
-      const str = `${this.config.username || ''}:${this.config.password || ''}`;
+      const str = `${this.config.username ?? ''}:${this.config.password ?? ''}`;
       headers.Authorization = 'Basic ' + str;
     }
 
@@ -339,7 +338,8 @@ export class Transmission implements TorrentClient {
     } catch (error) {
       if (error.response && error.response.statusCode === 409) {
         this.sessionId = error.response.headers['x-transmission-session-id'];
-        return this.request<T>(method, args);
+        // eslint-disable-next-line no-return-await
+        return await this.request<T>(method, args);
       }
 
       throw error;
