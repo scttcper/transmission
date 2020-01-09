@@ -12,7 +12,5 @@ module.exports = {
     'capitalized-comments': 0,
     'comma-dangle': ['error', 'always-multiline'],
     'no-await-in-loop': 0,
-    '@typescript-eslint/camelcase': 0,
-    '@typescript-eslint/promise-function-async': 0,
   },
 };
