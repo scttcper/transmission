@@ -1,15 +1,16 @@
+import fs from 'fs';
+import got, { Response } from 'got';
+import urlJoin from 'url-join';
+
 import {
+  AddTorrentOptions as NormalizedAddTorrentOptions,
   AllClientData,
+  Label,
   NormalizedTorrent,
   TorrentClient,
   TorrentSettings,
   TorrentState,
-  Label,
-  AddTorrentOptions as NormalizedAddTorrentOptions,
 } from '@ctrl/shared-torrent';
-import fs from 'fs';
-import got, { GotJSONOptions, Response } from 'got';
-import urlJoin from 'url-join';
 
 import {
   AddTorrentOptions,
@@ -17,12 +18,12 @@ import {
   DefaultResponse,
   FreeSpaceResponse,
   GetTorrentRepsonse,
+  RenamePathOptions,
   SessionArguments,
   SessionResponse,
+  SetTorrentOptions,
   Torrent,
   TorrentIds,
-  SetTorrentOptions,
-  RenamePathOptions,
 } from './types';
 
 const defaults: TorrentSettings = {
@@ -112,7 +113,10 @@ export class Transmission implements TorrentClient {
   /**
    * Torrent Mutators
    */
-  async setTorrent(ids: TorrentIds, options: Partial<SetTorrentOptions> = {}): Promise<DefaultResponse> {
+  async setTorrent(
+    ids: TorrentIds,
+    options: Partial<SetTorrentOptions> = {},
+  ): Promise<DefaultResponse> {
     options.ids = ids;
     const res = await this.request<DefaultResponse>('torrent-set', options);
     return res.body;
@@ -121,7 +125,10 @@ export class Transmission implements TorrentClient {
   /**
    * Renaming a Torrent's Path
    */
-  async renamePath(ids: TorrentIds, options: Partial<RenamePathOptions> = {}): Promise<DefaultResponse> {
+  async renamePath(
+    ids: TorrentIds,
+    options: Partial<RenamePathOptions> = {},
+  ): Promise<DefaultResponse> {
     options.ids = ids;
     const res = await this.request<DefaultResponse>('torrent-rename-path', options);
     return res.body;
@@ -315,26 +322,23 @@ export class Transmission implements TorrentClient {
     }
 
     const url = urlJoin(this.config.baseUrl, this.config.path);
-    const options: GotJSONOptions = {
-      body: {
-        method,
-        arguments: args,
-      },
-      headers,
-      retry: 0,
-      json: true,
-    };
-    // allow proxy agent
-    if (this.config.agent) {
-      options.agent = this.config.agent;
-    }
-
-    if (this.config.timeout) {
-      options.timeout = this.config.timeout;
-    }
 
     try {
-      return await got.post(url, options);
+      const res = await got
+        .post<T>(url, {
+        json: {
+          method,
+          arguments: args,
+        },
+        headers,
+        retry: 0,
+        // allow proxy agent
+        agent: this.config.agent,
+        timeout: this.config.timeout,
+        responseType: 'json',
+      });
+
+      return res;
     } catch (error) {
       if (error.response && error.response.statusCode === 409) {
         this.sessionId = error.response.headers['x-transmission-session-id'];
