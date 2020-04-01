@@ -294,7 +294,7 @@ export class Transmission implements TorrentClient {
       'webseeds',
       ...additionalFields,
     ];
-    const args: any = { fields };
+    const args: Record<string, string[] | TorrentIds> = { fields };
     if (ids) {
       args.ids = ids;
     }
@@ -313,7 +313,7 @@ export class Transmission implements TorrentClient {
       await this.getSession();
     }
 
-    const headers: any = {
+    const headers: Record<string, string | undefined> = {
       'X-Transmission-Session-Id': this.sessionId,
     };
     if (this.config.username || this.config.password) {
@@ -340,9 +340,11 @@ export class Transmission implements TorrentClient {
 
       return res;
     } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response && error.response.statusCode === 409) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.sessionId = error.response.headers['x-transmission-session-id'];
-        // eslint-disable-next-line no-return-await
+        // eslint-disable-next-line no-return-await, @typescript-eslint/no-unsafe-call
         return await this.request<T>(method, args);
       }
 
