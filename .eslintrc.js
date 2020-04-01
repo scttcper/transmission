@@ -12,5 +12,6 @@ module.exports = {
     'capitalized-comments': 0,
     'comma-dangle': ['error', 'always-multiline'],
     'no-await-in-loop': 0,
+    '@typescript-eslint/prefer-readonly-parameter-types': 0,
   },
 };
