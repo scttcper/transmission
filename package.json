@@ -27,13 +27,13 @@
     "semantic-release": "semantic-release"
   },
   "dependencies": {
-    "@ctrl/shared-torrent": "^2.0.0",
-    "got": "^11.0.1",
+    "@ctrl/shared-torrent": "^3.0.0",
+    "got": "^11.0.2",
     "url-join": "^4.0.1"
   },
   "devDependencies": {
     "@types/jest": "25.2.1",
-    "@types/node": "13.13.1",
+    "@types/node": "13.13.2",
     "@types/url-join": "4.0.0",
     "@typescript-eslint/eslint-plugin": "2.29.0",
     "@typescript-eslint/parser": "2.29.0",

@@ -11,7 +11,6 @@
     "noUnusedLocals": true,
     "declaration": true,
     "sourceMap": true,
-    "inlineSources": true,
     "outDir": "dist"
   },
   "typedocOptions": {
