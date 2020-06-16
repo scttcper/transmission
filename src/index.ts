@@ -308,7 +308,7 @@ export class Transmission implements TorrentClient {
   //   return torrent;
   // }
 
-  async request<T extends object>(method: string, args: any = {}): Promise<Response<T>> {
+  async request<T extends any>(method: string, args: any = {}): Promise<Response<T>> {
     if (!this.sessionId && method !== 'session-get') {
       await this.getSession();
     }
@@ -340,11 +340,9 @@ export class Transmission implements TorrentClient {
 
       return res;
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (error.response && error.response.statusCode === 409) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         this.sessionId = error.response.headers['x-transmission-session-id'];
-        // eslint-disable-next-line no-return-await, @typescript-eslint/no-unsafe-call
+        // eslint-disable-next-line no-return-await
         return await this.request<T>(method, args);
       }
 
@@ -381,7 +379,7 @@ export class Transmission implements TorrentClient {
       ratio: torrent.uploadRatio,
       dateAdded,
       dateCompleted,
-      label: torrent.labels && torrent.labels.length ? torrent.labels[0] : undefined,
+      label: torrent.labels?.length ? torrent.labels[0] : undefined,
       savePath: torrent.downloadDir,
       uploadSpeed: torrent.rateUpload,
       downloadSpeed: torrent.rateDownload,
