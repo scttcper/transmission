@@ -32,7 +32,7 @@
     "url-join": "^4.0.1"
   },
   "devDependencies": {
-    "@types/jest": "26.0.0",
+    "@types/jest": "26.0.3",
     "@types/node": "14.0.13",
     "@types/url-join": "4.0.0",
     "@typescript-eslint/eslint-plugin": "3.3.0",
