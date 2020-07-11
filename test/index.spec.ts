@@ -1,3 +1,4 @@
+import { describe, afterEach, it, expect } from '@jest/globals';
 import fs from 'fs';
 import pWaitFor from 'p-wait-for';
 import path from 'path';
@@ -27,6 +28,7 @@ describe('Transmission', () => {
     const res = await transmission.listTorrents();
     // clean up all torrents
     for (const torrent of res.arguments.torrents) {
+      // eslint-disable-next-line no-await-in-loop
       await transmission.removeTorrent(torrent.id, false);
     }
   });
