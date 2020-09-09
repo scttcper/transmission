@@ -1,7 +1,7 @@
-import fs from 'fs';
-import got, { Response } from 'got';
-import urlJoin from 'url-join';
+import { existsSync, readFileSync } from 'fs';
 
+import got, { Response } from 'got';
+import { urlJoin } from '@ctrl/url-join';
 import {
   AddTorrentOptions as NormalizedAddTorrentOptions,
   AllClientData,
@@ -160,8 +160,8 @@ export class Transmission implements TorrentClient {
     };
 
     if (typeof torrent === 'string') {
-      args.metainfo = fs.existsSync(torrent) ?
-        Buffer.from(fs.readFileSync(torrent)).toString('base64') :
+      args.metainfo = existsSync(torrent) ?
+        Buffer.from(readFileSync(torrent)).toString('base64') :
         Buffer.from(torrent, 'base64').toString('base64');
     } else {
       args.metainfo = torrent.toString('base64');
