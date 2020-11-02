@@ -151,7 +151,10 @@ export class Transmission implements TorrentClient {
    * @param url magnet link
    * @param options
    */
-  async addMagnet(url: string, options: Partial<AddTorrentOptions> = {}): Promise<AddTorrentResponse> {
+  async addMagnet(
+    url: string,
+    options: Partial<AddTorrentOptions> = {},
+  ): Promise<AddTorrentResponse> {
     const args: AddTorrentOptions = {
       'download-dir': '/downloads',
       paused: false,
@@ -179,9 +182,9 @@ export class Transmission implements TorrentClient {
     };
 
     if (typeof torrent === 'string') {
-      args.metainfo = existsSync(torrent) ?
-        Buffer.from(readFileSync(torrent)).toString('base64') :
-        Buffer.from(torrent, 'base64').toString('base64');
+      args.metainfo = existsSync(torrent)
+        ? Buffer.from(readFileSync(torrent)).toString('base64')
+        : Buffer.from(torrent, 'base64').toString('base64');
     } else {
       args.metainfo = torrent.toString('base64');
     }
@@ -225,14 +228,14 @@ export class Transmission implements TorrentClient {
 
   async getAllData(): Promise<AllClientData> {
     const listTorrents = await this.listTorrents();
-    const torrents = listTorrents.arguments.torrents.map(n => this._normalizeTorrentData(n));
+    const torrents = listTorrents.arguments.torrents.map((n) => this._normalizeTorrentData(n));
     const labels: Label[] = [];
     for (const torrent of torrents) {
       if (!torrent.label) {
         continue;
       }
 
-      const existing = labels.find(n => n.id === torrent.label);
+      const existing = labels.find((n) => n.id === torrent.label);
       if (existing) {
         existing.count += 1;
         continue;
@@ -343,8 +346,7 @@ export class Transmission implements TorrentClient {
     const url = urlJoin(this.config.baseUrl, this.config.path);
 
     try {
-      const res = await got
-        .post<T>(url, {
+      const res = await got.post<T>(url, {
         json: {
           method,
           arguments: args,
@@ -359,7 +361,7 @@ export class Transmission implements TorrentClient {
 
       return res;
     } catch (error) {
-      if (error.response && error.response.statusCode === 409) {
+      if (error?.response?.statusCode === 409) {
         this.sessionId = error.response.headers['x-transmission-session-id'];
         // eslint-disable-next-line no-return-await
         return await this.request<T>(method, args);

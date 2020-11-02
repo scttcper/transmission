@@ -571,4 +571,3 @@ export interface RenamePathOptions {
    */
   name: string;
 }
-
