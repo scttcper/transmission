@@ -146,6 +146,25 @@ export class Transmission implements TorrentClient {
   }
 
   /**
+   * note: This is the same "torrent-add" action with different options,
+   * less confusing to add it as its own method
+   * @param url magnet link
+   * @param options
+   */
+  async addMagnet(url: string, options: Partial<AddTorrentOptions> = {}): Promise<AddTorrentResponse> {
+    const args: AddTorrentOptions = {
+      'download-dir': '/downloads',
+      paused: false,
+      ...options,
+    };
+
+    args.filename = url;
+
+    const res = await this.request<AddTorrentResponse>('torrent-add', args);
+    return res.body;
+  }
+
+  /**
    * Adding a torrent
    * @param torrent a string of file path or contents of the file as base64 string
    */

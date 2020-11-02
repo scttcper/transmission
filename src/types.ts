@@ -10,6 +10,10 @@ export interface AddTorrentOptions {
   metainfo?: string;
   'download-dir': string;
   paused: boolean;
+  /**
+   * Magent link
+   */
+  filename?: string;
 }
 
 export interface AddTorrentResponse extends DefaultResponse {
