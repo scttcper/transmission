@@ -330,7 +330,7 @@ export class Transmission implements TorrentClient {
   //   return torrent;
   // }
 
-  async request<T extends any>(method: string, args: any = {}): Promise<Response<T>> {
+  async request<T>(method: string, args: any = {}): Promise<Response<T>> {
     if (!this.sessionId && method !== 'session-get') {
       await this.getSession();
     }
