@@ -340,7 +340,7 @@ export class Transmission implements TorrentClient {
     };
     if (this.config.username || this.config.password) {
       const str = `${this.config.username ?? ''}:${this.config.password ?? ''}`;
-      headers.Authorization = 'Basic ' + str;
+      headers.Authorization = 'Basic ' + Buffer.from(str).toString('base64');
     }
 
     const url = urlJoin(this.config.baseUrl, this.config.path);
