@@ -146,6 +146,13 @@ export class Transmission implements TorrentClient {
   }
 
   /**
+   * An alias for {@link Transmission.addMagnet}
+   */
+  async addUrl(...args: Parameters<Transmission['addMagnet']>) {
+    return this.addMagnet(...args);
+  }
+
+  /**
    * note: This is the same "torrent-add" action with different options,
    * less confusing to add it as its own method
    * @param url magnet link
