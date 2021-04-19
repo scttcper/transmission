@@ -104,7 +104,7 @@ describe('Transmission', () => {
     expect(res.arguments.path).toBe(p);
     expect(typeof res.arguments['size-bytes']).toBe('number');
   });
-  it('should report free space', async () => {
+  it('should add from url', async () => {
     const transmission = new Transmission({ baseUrl });
     const res = await transmission.addUrl(
       'https://releases.ubuntu.com/20.10/ubuntu-20.10-desktop-amd64.iso.torrent',
