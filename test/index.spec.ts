@@ -1,10 +1,12 @@
-import { describe, afterEach, it, expect } from '@jest/globals';
 import fs from 'fs';
-import pWaitFor from 'p-wait-for';
 import path from 'path';
 
-import { Transmission } from '../src/index';
+import { afterEach, describe, expect, it } from '@jest/globals';
+import pWaitFor from 'p-wait-for';
+
 import { TorrentState } from '@ctrl/shared-torrent';
+
+import { Transmission } from '../src/index';
 
 const baseUrl = 'http://localhost:9091/';
 const torrentName = 'ubuntu-18.04.1-desktop-amd64.iso';

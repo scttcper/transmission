@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'fs';
 
 import got, { Response } from 'got';
-import { urlJoin } from '@ctrl/url-join';
+
 import {
   AddTorrentOptions as NormalizedAddTorrentOptions,
   AllClientData,
@@ -11,6 +11,7 @@ import {
   TorrentSettings,
   TorrentState,
 } from '@ctrl/shared-torrent';
+import { urlJoin } from '@ctrl/url-join';
 
 import {
   AddTorrentOptions,
