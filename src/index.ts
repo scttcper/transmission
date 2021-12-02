@@ -368,7 +368,7 @@ export class Transmission implements TorrentClient {
       });
 
       return res;
-    } catch (error) {
+    } catch (error: any) {
       if (error?.response?.statusCode === 409) {
         this.sessionId = error.response.headers['x-transmission-session-id'];
         // eslint-disable-next-line no-return-await
