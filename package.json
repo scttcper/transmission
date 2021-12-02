@@ -23,7 +23,7 @@
     "build:docs": "typedoc",
     "test": "jest --runInBand",
     "test:watch": "jest --watch --runInBand",
-    "test:ci": "jest --coverage --no-cache --runInBand"
+    "test:ci": "jest --ci --runInBand --reporters=default --reporters=jest-junit --coverage"
   },
   "dependencies": {
     "@ctrl/shared-torrent": "^3.0.5",
