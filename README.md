@@ -4,7 +4,7 @@
 
 ### Install
 
-```console
+```sh
 npm install @ctrl/transmission
 ```
 
