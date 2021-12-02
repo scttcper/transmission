@@ -1,6 +1,7 @@
 {
-  "entryPoints": ["src/index.ts"],
-  "tsconfig": "tsconfig.build.json",
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["./src"],
+  "sort": ["source-order"],
   "out": "docs",
   "excludePrivate": true,
   "excludeProtected": true,
