@@ -140,7 +140,7 @@ export interface Torrent {
   totalSize: number;
   status: number;
   trackers: Tracker[];
-  files: FileStats[];
+  files: Files[];
   fileStats: FileStats[];
   hashString: string;
   creator: string;
