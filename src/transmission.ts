@@ -35,6 +35,12 @@ const defaults: TorrentSettings = {
   timeout: 5000,
 };
 
+/**
+ * TODO: remove when hash is available on normalized torrent
+ * @deprecated
+ */
+export type TransmissionNormalizedTorrent = NormalizedTorrent & { hash: string };
+
 export class Transmission implements TorrentClient {
   config: TorrentSettings;
 
@@ -204,7 +210,7 @@ export class Transmission implements TorrentClient {
   async normalizedAddTorrent(
     torrent: string | Buffer,
     options: Partial<NormalizedAddTorrentOptions> = {},
-  ): Promise<NormalizedTorrent> {
+  ): Promise<TransmissionNormalizedTorrent> {
     const torrentOptions: Partial<AddTorrentOptions> = {};
     if (options.startPaused) {
       torrentOptions.paused = true;
@@ -218,14 +224,13 @@ export class Transmission implements TorrentClient {
     const torrentId = res.arguments['torrent-added'].id;
 
     if (options.label) {
-      const res = await this.setTorrent(torrentId, { labels: [options.label] });
-      console.log(res);
+      await this.setTorrent(torrentId, { labels: [options.label] });
     }
 
     return this.getTorrent(torrentId);
   }
 
-  async getTorrent(id: TorrentIds): Promise<NormalizedTorrent> {
+  async getTorrent(id: TorrentIds): Promise<TransmissionNormalizedTorrent> {
     const result = await this.listTorrents(id);
     if (!result.arguments.torrents || result.arguments.torrents.length === 0) {
       throw new Error('Torrent not found');
@@ -333,11 +338,6 @@ export class Transmission implements TorrentClient {
     return res.body;
   }
 
-  // async getTorrent(id: TorrentIds): Promise<NormalizedTorrent> {
-  //   const torrent: any = {};
-  //   return torrent;
-  // }
-
   async request<T>(method: string, args: any = {}): Promise<Response<T>> {
     if (!this.sessionId && method !== 'session-get') {
       await this.getSession();
@@ -375,11 +375,12 @@ export class Transmission implements TorrentClient {
         return await this.request<T>(method, args);
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
       throw error;
     }
   }
 
-  private _normalizeTorrentData(torrent: Torrent): NormalizedTorrent {
+  private _normalizeTorrentData(torrent: Torrent): TransmissionNormalizedTorrent {
     const dateAdded = new Date(torrent.addedDate * 1000).toISOString();
     const dateCompleted = new Date(torrent.doneDate * 1000).toISOString();
 
@@ -398,8 +399,9 @@ export class Transmission implements TorrentClient {
       state = TorrentState.queued;
     }
 
-    const result: NormalizedTorrent = {
+    return {
       id: torrent.id,
+      hash: torrent.hashString,
       name: torrent.name,
       state,
       isCompleted: torrent.leftUntilDone < 1,
@@ -423,6 +425,5 @@ export class Transmission implements TorrentClient {
       totalUploaded: torrent.uploadedEver,
       totalDownloaded: torrent.downloadedEver,
     };
-    return result;
   }
 }
