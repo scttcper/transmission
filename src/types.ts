@@ -45,12 +45,18 @@ export interface FreeSpaceResponse extends DefaultResponse {
 /**
  * "ids", which specifies which torrents to use.
  * All torrents are used if the "ids" argument is omitted.
+ *
  * "ids" should be one of the following:
- * (1) an integer referring to a torrent id
- * (2) a list of torrent id numbers, sha1 hash strings, or both
- * (3) a string, "recently-active", for recently-active torrents
+ * 1. an integer referring to a torrent id
+ * 2. a list of torrent id numbers, sha1 hash strings, or both
+ * 3. a string, "recently-active", for recently-active torrents
  */
 export type TorrentIds = number | 'recently-active' | Array<number | string>;
+
+/**
+ * Allows the user to pass a single hash, this will be converted to an array
+ */
+export type NormalizedTorrentIds = TorrentIds | string;
 
 export interface GetTorrentRepsonse extends DefaultResponse {
   arguments: {

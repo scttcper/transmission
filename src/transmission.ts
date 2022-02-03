@@ -19,6 +19,7 @@ import {
   DefaultResponse,
   FreeSpaceResponse,
   GetTorrentRepsonse,
+  NormalizedTorrentIds,
   RenamePathOptions,
   SessionArguments,
   SessionResponse,
@@ -34,12 +35,6 @@ const defaults: TorrentSettings = {
   password: '',
   timeout: 5000,
 };
-
-/**
- * TODO: remove when hash is available on normalized torrent
- * @deprecated
- */
-export type TransmissionNormalizedTorrent = NormalizedTorrent & { hash: string };
 
 export class Transmission implements TorrentClient {
   config: TorrentSettings;
@@ -60,22 +55,26 @@ export class Transmission implements TorrentClient {
     return res.body;
   }
 
-  async queueTop(ids: TorrentIds): Promise<DefaultResponse> {
+  async queueTop(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('queue-move-top', { ids });
     return res.body;
   }
 
-  async queueBottom(ids: TorrentIds): Promise<DefaultResponse> {
+  async queueBottom(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('queue-move-bottom', { ids });
     return res.body;
   }
 
-  async queueUp(ids: TorrentIds): Promise<DefaultResponse> {
+  async queueUp(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('queue-move-up', { ids });
     return res.body;
   }
 
-  async queueDown(ids: TorrentIds): Promise<DefaultResponse> {
+  async queueDown(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('queue-move-down', { ids });
     return res.body;
   }
@@ -85,17 +84,20 @@ export class Transmission implements TorrentClient {
     return res.body;
   }
 
-  async pauseTorrent(ids: TorrentIds): Promise<DefaultResponse> {
+  async pauseTorrent(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('torrent-stop', { ids });
     return res.body;
   }
 
-  async resumeTorrent(ids: TorrentIds): Promise<DefaultResponse> {
+  async resumeTorrent(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('torrent-start', { ids });
     return res.body;
   }
 
-  async verifyTorrent(ids: TorrentIds): Promise<DefaultResponse> {
+  async verifyTorrent(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('torrent-verify', { ids });
     return res.body;
   }
@@ -103,12 +105,14 @@ export class Transmission implements TorrentClient {
   /**
    * ask tracker for more peers
    */
-  async reannounceTorrent(ids: TorrentIds): Promise<DefaultResponse> {
+  async reannounceTorrent(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('torrent-reannounce', { ids });
     return res.body;
   }
 
-  async moveTorrent(ids: TorrentIds, location: string): Promise<DefaultResponse> {
+  async moveTorrent(id: NormalizedTorrentIds, location: string): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<DefaultResponse>('torrent-set-location', {
       ids,
       move: true,
@@ -121,9 +125,10 @@ export class Transmission implements TorrentClient {
    * Torrent Mutators
    */
   async setTorrent(
-    ids: TorrentIds,
+    id: NormalizedTorrentIds,
     options: Partial<SetTorrentOptions> = {},
   ): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     options.ids = ids;
     const res = await this.request<DefaultResponse>('torrent-set', options);
     return res.body;
@@ -133,9 +138,10 @@ export class Transmission implements TorrentClient {
    * Renaming a Torrent's Path
    */
   async renamePath(
-    ids: TorrentIds,
+    id: NormalizedTorrentIds,
     options: Partial<RenamePathOptions> = {},
   ): Promise<DefaultResponse> {
+    const ids = this._handleNormalizedIds(id);
     options.ids = ids;
     const res = await this.request<DefaultResponse>('torrent-rename-path', options);
     return res.body;
@@ -144,7 +150,8 @@ export class Transmission implements TorrentClient {
   /**
    * Removing a Torrent
    */
-  async removeTorrent(ids: TorrentIds, removeData = true): Promise<AddTorrentResponse> {
+  async removeTorrent(id: NormalizedTorrentIds, removeData = true): Promise<AddTorrentResponse> {
+    const ids = this._handleNormalizedIds(id);
     const res = await this.request<AddTorrentResponse>('torrent-remove', {
       ids,
       'delete-local-data': removeData,
@@ -210,7 +217,7 @@ export class Transmission implements TorrentClient {
   async normalizedAddTorrent(
     torrent: string | Buffer,
     options: Partial<NormalizedAddTorrentOptions> = {},
-  ): Promise<TransmissionNormalizedTorrent> {
+  ): Promise<NormalizedTorrent> {
     const torrentOptions: Partial<AddTorrentOptions> = {};
     if (options.startPaused) {
       torrentOptions.paused = true;
@@ -221,16 +228,16 @@ export class Transmission implements TorrentClient {
     }
 
     const res = await this.addTorrent(torrent, torrentOptions);
-    const torrentId = res.arguments['torrent-added'].id;
+    const torrentHash = [res.arguments['torrent-added'].hashString];
 
     if (options.label) {
-      await this.setTorrent(torrentId, { labels: [options.label] });
+      await this.setTorrent(torrentHash, { labels: [options.label] });
     }
 
-    return this.getTorrent(torrentId);
+    return this.getTorrent(torrentHash);
   }
 
-  async getTorrent(id: TorrentIds): Promise<TransmissionNormalizedTorrent> {
+  async getTorrent(id: NormalizedTorrentIds): Promise<NormalizedTorrent> {
     const result = await this.listTorrents(id);
     if (!result.arguments.torrents || result.arguments.torrents.length === 0) {
       throw new Error('Torrent not found');
@@ -265,7 +272,7 @@ export class Transmission implements TorrentClient {
   }
 
   async listTorrents(
-    ids?: TorrentIds,
+    id?: NormalizedTorrentIds,
     additionalFields: string[] = [],
   ): Promise<GetTorrentRepsonse> {
     const fields = [
@@ -329,8 +336,9 @@ export class Transmission implements TorrentClient {
       'webseeds',
       ...additionalFields,
     ];
-    const args: Record<string, string[] | TorrentIds> = { fields };
-    if (ids) {
+    const args: Record<string, string[] | NormalizedTorrentIds> = { fields };
+    if (id) {
+      const ids = this._handleNormalizedIds(id);
       args.ids = ids;
     }
 
@@ -380,7 +388,15 @@ export class Transmission implements TorrentClient {
     }
   }
 
-  private _normalizeTorrentData(torrent: Torrent): TransmissionNormalizedTorrent {
+  private _handleNormalizedIds(ids: NormalizedTorrentIds): TorrentIds {
+    if (typeof ids === 'string' && ids !== 'recently-active') {
+      return [ids];
+    }
+
+    return ids;
+  }
+
+  private _normalizeTorrentData(torrent: Torrent): NormalizedTorrent {
     const dateAdded = new Date(torrent.addedDate * 1000).toISOString();
     const dateCompleted = new Date(torrent.doneDate * 1000).toISOString();
 
@@ -400,8 +416,7 @@ export class Transmission implements TorrentClient {
     }
 
     return {
-      id: torrent.id,
-      hash: torrent.hashString,
+      id: torrent.hashString,
       name: torrent.name,
       state,
       isCompleted: torrent.leftUntilDone < 1,
