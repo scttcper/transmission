@@ -12,7 +12,7 @@ const baseUrl = 'http://localhost:9091/';
 const torrentName = 'ubuntu-18.04.1-desktop-amd64.iso';
 const torrentFile = path.join(__dirname, '/ubuntu-18.04.1-desktop-amd64.iso.torrent');
 
-async function setupTorrent(transmission: Transmission) {
+async function setupTorrent(transmission: Transmission): Promise<string> {
   const res = await transmission.addTorrent(torrentFile);
   await pWaitFor(
     async () => {
@@ -21,7 +21,7 @@ async function setupTorrent(transmission: Transmission) {
     },
     { timeout: 10000, interval: 200 },
   );
-  return res.arguments['torrent-added'].id;
+  return res.arguments['torrent-added'].hashString;
 }
 
 describe('Transmission', () => {
