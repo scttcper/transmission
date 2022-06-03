@@ -2,6 +2,7 @@ import { existsSync, readFileSync } from 'fs';
 
 import got, { Response } from 'got';
 
+import { magnetDecode } from '@ctrl/magnet-link';
 import {
   AddTorrentOptions as NormalizedAddTorrentOptions,
   AllClientData,
@@ -223,12 +224,22 @@ export class Transmission implements TorrentClient {
       torrentOptions.paused = true;
     }
 
-    if (!Buffer.isBuffer(torrent)) {
-      torrent = Buffer.from(torrent);
-    }
+    let torrentHash: string | undefined;
+    if (typeof torrent === 'string' && torrent.startsWith('magnet:')) {
+      torrentHash = magnetDecode(torrent).infoHash;
+      if (!torrentHash) {
+        throw new Error('Magnet did not contain hash');
+      }
 
-    const res = await this.addTorrent(torrent, torrentOptions);
-    const torrentHash = [res.arguments['torrent-added'].hashString];
+      await this.addMagnet(torrent, torrentOptions);
+    } else {
+      if (!Buffer.isBuffer(torrent)) {
+        torrent = Buffer.from(torrent);
+      }
+
+      const res = await this.addTorrent(torrent, torrentOptions);
+      torrentHash = res.arguments['torrent-added'].hashString;
+    }
 
     if (options.label) {
       await this.setTorrent(torrentHash, { labels: [options.label] });
