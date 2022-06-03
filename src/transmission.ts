@@ -26,7 +26,7 @@ import {
   SetTorrentOptions,
   Torrent,
   TorrentIds,
-} from './types';
+} from './types.js';
 
 const defaults: TorrentSettings = {
   baseUrl: 'http://localhost:9091/',
@@ -368,11 +368,11 @@ export class Transmission implements TorrentClient {
           arguments: args,
         },
         headers,
-        retry: 0,
+        retry: { limit: 0 },
         // allow proxy agent
-        agent: this.config.agent,
-        timeout: this.config.timeout,
+        timeout: { request: this.config.timeout },
         responseType: 'json',
+        ...(this.config.agent ? { agent: this.config.agent } : {}),
       });
 
       return res;
