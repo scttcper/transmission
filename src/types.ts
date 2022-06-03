@@ -1,5 +1,6 @@
 export interface DefaultResponse {
   arguments: any;
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   result: 'success' | string;
 }
 
@@ -56,6 +57,7 @@ export type TorrentIds = number | 'recently-active' | Array<number | string>;
 /**
  * Allows the user to pass a single hash, this will be converted to an array
  */
+// eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
 export type NormalizedTorrentIds = TorrentIds | string;
 
 export interface GetTorrentRepsonse extends DefaultResponse {
