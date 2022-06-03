@@ -13,7 +13,7 @@
   "main": "./dist/src/index.js",
   "typings": "./dist/src/index.d.ts",
   "files": [
-    "dist"
+    "dist/src"
   ],
   "sideEffects": false,
   "scripts": {
