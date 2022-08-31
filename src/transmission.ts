@@ -1,20 +1,21 @@
 import { existsSync, readFileSync } from 'fs';
 
-import got, { Response } from 'got';
+import type { Response } from 'got';
+import got from 'got';
 
 import { magnetDecode } from '@ctrl/magnet-link';
-import {
+import type {
   AddTorrentOptions as NormalizedAddTorrentOptions,
   AllClientData,
   Label,
   NormalizedTorrent,
   TorrentClient,
   TorrentSettings,
-  TorrentState,
 } from '@ctrl/shared-torrent';
+import { TorrentState } from '@ctrl/shared-torrent';
 import { urlJoin } from '@ctrl/url-join';
 
-import {
+import type {
   AddTorrentOptions,
   AddTorrentResponse,
   DefaultResponse,
