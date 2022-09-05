@@ -10,11 +10,11 @@ jobs:
       transmission:
         image: linuxserver/transmission
         options: >-
-          -e PUID=1000 \
-          -e PGID=1000 \
-          -p 9091:9091 \
-          -p 51413:51413 \
-          -p 51413:51413/udp \
+          -e PUID=1000
+          -e PGID=1000
+          -p 9091:9091
+          -p 51413:51413
+          -p 51413:51413/udp
     steps:
       - name: checkout
         uses: actions/checkout@master
