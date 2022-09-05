@@ -111,7 +111,7 @@ describe('Transmission', () => {
   });
   it('should report free space', async () => {
     const transmission = createTransmission();
-    const p = '~/downloads';
+    const p = '/downloads';
     const res = await transmission.freeSpace(p);
     expect(res.result).toBe('success');
     expect(res.arguments.path).toBe(p);
