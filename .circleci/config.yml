@@ -9,10 +9,15 @@ jobs:
     steps:
       - checkout
       - node/install-packages
-      - run: sudo add-apt-repository ppa:transmissionbt/ppa
-      - run: sudo apt-get update
-      - run: sudo apt-get install transmission-cli transmission-common transmission-daemon
-      - run: sudo service transmission-daemon start
+      - run:
+          name: setup transmission
+          command: |
+            sudo add-apt-repository ppa:transmissionbt/ppa
+            sudo apt-get update
+            sudo apt-get install transmission-cli transmission-common transmission-daemon
+            sudo service transmission-daemon start
+            mkdir /downloads
+            mkdir ~/downloads
       - run:
           name: lint
           command: npm run lint
