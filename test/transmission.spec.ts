@@ -8,7 +8,7 @@ import { TorrentState } from '@ctrl/shared-torrent';
 
 import { Transmission } from '../src/index.js';
 
-const baseUrl = 'http://localhost:9091/';
+const baseUrl = 'http://transmission:9091/';
 const torrentName = 'ubuntu-18.04.1-desktop-amd64.iso';
 const torrentFile = path.join(__dirname, '/ubuntu-18.04.1-desktop-amd64.iso.torrent');
 
