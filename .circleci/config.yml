@@ -8,9 +8,8 @@ jobs:
       - image: cimg/node:current
       - image: linuxserver/transmission
         environment:
-          PUID: 1000
-          PGID: 1000
-          TZ: Europe/London
+          PUID: 1016
+          PGID: 100
     steps:
       - checkout
       - node/install-packages
