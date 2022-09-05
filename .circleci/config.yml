@@ -7,7 +7,7 @@ jobs:
     docker:
       - image: cimg/node:current
       - image: linuxserver/transmission
-        command: [--PUID=1000, --PGID=1000]
+        command: "--PUID=1000 --PGID=1000"
     steps:
       - checkout
       - node/install-packages
