@@ -9,6 +9,8 @@ import { TorrentState } from '@ctrl/shared-torrent';
 import { Transmission } from '../src/index.js';
 
 const baseUrl = 'http://localhost:9091/';
+const username = 'transmission';
+const password = 'transmission';
 const torrentName = 'ubuntu-18.04.1-desktop-amd64.iso';
 const torrentFile = path.join(__dirname, '/ubuntu-18.04.1-desktop-amd64.iso.torrent');
 
@@ -24,9 +26,11 @@ async function setupTorrent(transmission: Transmission): Promise<string> {
   return res.arguments['torrent-added'].hashString;
 }
 
+const createTransmission = () => new Transmission({ baseUrl, username, password });
+
 describe('Transmission', () => {
   afterEach(async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const res = await transmission.listTorrents();
     // clean up all torrents
     for (const torrent of res.arguments.torrents) {
@@ -35,70 +39,70 @@ describe('Transmission', () => {
     }
   });
   it('should be instantiable', () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     expect(transmission).toBeTruthy();
   });
   it('should add torrent from file path string', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const res = await transmission.addTorrent(torrentFile);
     expect(res.result).toBe('success');
   });
   it('should add magnet link', async () => {
     const magnet =
       'magnet:?xt=urn:btih:B0B81206633C42874173D22E564D293DAEFC45E2&dn=Ubuntu+11+10+Alternate+Amd64+Iso&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.open-internet.nl%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.si%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.pirateparty.gr%3A6969%2Fannounce&tr=udp%3A%2F%2Fdenis.stalker.upeer.me%3A6969%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce';
-    const client = new Transmission({ baseUrl });
+    const client = createTransmission();
     const res = await client.addMagnet(magnet);
     expect(res.result).toBe('success');
   });
   it('should add normalized magnet link', async () => {
     const magnet =
       'magnet:?xt=urn:btih:B0B81206633C42874173D22E564D293DAEFC45E2&dn=Ubuntu+11+10+Alternate+Amd64+Iso&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.open-internet.nl%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.si%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.pirateparty.gr%3A6969%2Fannounce&tr=udp%3A%2F%2Fdenis.stalker.upeer.me%3A6969%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce';
-    const client = new Transmission({ baseUrl });
+    const client = createTransmission();
     const res = await client.normalizedAddTorrent(magnet);
     expect(res.id).toBeTruthy();
   });
   it('should add torrent from file buffer', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const res = await transmission.addTorrent(fs.readFileSync(torrentFile));
     expect(res.result).toBe('success');
   });
   it('should add torrent from file contents base64', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const contents = Buffer.from(fs.readFileSync(torrentFile)).toString('base64');
     const res = await transmission.addTorrent(contents);
     expect(res.result).toBe('success');
   });
   it('should get torrents', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     await setupTorrent(transmission);
     const res = await transmission.listTorrents(undefined, ['id']);
     expect(res.arguments.torrents).toHaveLength(1);
   });
   it('should get normalized all torrent data', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     await setupTorrent(transmission);
     const res = await transmission.getAllData();
     expect(res.torrents).toHaveLength(1);
     expect(res.torrents[0].name).toBe(torrentName);
   });
   it('should get normalized torrent data', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const id = await setupTorrent(transmission);
     const res = await transmission.getTorrent(id);
     expect(res.name).toBe(torrentName);
   });
   it('should remove torrent', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const key = await setupTorrent(transmission);
     await transmission.removeTorrent(key, false);
   });
   it('should verify torrent', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const key = await setupTorrent(transmission);
     await transmission.verifyTorrent(key);
   });
   it('should move in queue', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const key = await setupTorrent(transmission);
     await transmission.queueUp(key);
     await transmission.queueDown(key);
@@ -106,7 +110,7 @@ describe('Transmission', () => {
     await transmission.queueBottom(key);
   });
   it('should report free space', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const p = '/downloads';
     const res = await transmission.freeSpace(p);
     expect(res.result).toBe('success');
@@ -114,14 +118,14 @@ describe('Transmission', () => {
     expect(typeof res.arguments['size-bytes']).toBe('number');
   });
   it('should add from url', async () => {
-    const transmission = new Transmission({ baseUrl });
+    const transmission = createTransmission();
     const res = await transmission.addUrl(
       'https://releases.ubuntu.com/20.10/ubuntu-20.10-desktop-amd64.iso.torrent',
     );
     expect(res.result).toBe('success');
   });
   it('should add torrent with normalized response', async () => {
-    const client = new Transmission({ baseUrl });
+    const client = createTransmission();
 
     const torrent = await client.normalizedAddTorrent(fs.readFileSync(torrentFile), {
       label: 'test',
