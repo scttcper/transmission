@@ -11,7 +11,7 @@ jobs:
           docker_layer_caching: true
       - run:
           name: start transmission
-          command: docker run -d linuxserver/transmission --name=transmission -e PUID=1000 -e PGID=1000
+          command: docker run -d --name=transmission -e PUID=1000 -e PGID=1000 -p 9091:9091 -p 51413:51413 -p 51413:51413/udp --restart unless-stopped lscr.io/linuxserver/transmission:latest
           background: true
       - checkout
       - node/install-packages
