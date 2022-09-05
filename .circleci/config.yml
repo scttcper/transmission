@@ -7,14 +7,12 @@ jobs:
     docker:
       - image: cimg/node:current
     steps:
-      - setup_remote_docker:
-          docker_layer_caching: true
-      - run:
-          name: start transmission
-          command: docker run -d --name=transmission -e PUID=1000 -e PGID=1000 -p 9091:9091 -p 51413:51413 -p 51413:51413/udp --restart unless-stopped lscr.io/linuxserver/transmission:latest
-          background: true
       - checkout
       - node/install-packages
+      - run: sudo add-apt-repository ppa:transmissionbt/ppa
+      - run: sudo apt-get update
+      - run: sudo apt-get install transmission-cli transmission-common transmission-daemon
+      - run: sudo service transmission-daemon start
       - run:
           name: lint
           command: npm run lint
