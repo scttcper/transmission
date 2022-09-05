@@ -1,0 +1,55 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: node:10.18-jessie
+    services:
+      postgres:
+        image: linuxserver/transmission
+        env:
+          PUID: 1000
+          PGID: 1000
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+      - name: setup node
+        uses: actions/setup-node@master
+        with:
+          node-version: 16
+          cache: 'npm'
+      - name: install dependencies
+        run: npm ci
+      - name: lint
+        run: npm run lint
+      - name: test
+        run: npm run test:ci
+
+  coverage:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Atrox/codecov-action@master
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  publish:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@master
+      - name: setup node
+        uses: actions/setup-node@master
+        with:
+          node-version: 16
+      - name: install dependencies
+        run: npm ci
+      - name: release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release
