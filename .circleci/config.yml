@@ -7,6 +7,8 @@ jobs:
     docker:
       - image: cimg/node:current
     steps:
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: start transmission
           command: docker run -d linuxserver/transmission --name=transmission -e PUID=1000 -e PGID=1000
