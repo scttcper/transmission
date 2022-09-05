@@ -8,7 +8,7 @@ jobs:
       - image: cimg/node:current
     steps:
       - setup_remote_docker
-      - run: docker run -d --name=transmission -e PUID=1000 -e PGID=1000
+      - run: docker run -d linuxserver/transmission --name=transmission -e PUID=1000 -e PGID=1000
       - checkout
       - node/install-packages
       - run:
