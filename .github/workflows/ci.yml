@@ -7,11 +7,14 @@ jobs:
     runs-on: ubuntu-latest
     container: node:10.18-jessie
     services:
-      postgres:
+      transmission:
         image: linuxserver/transmission
-        env:
-          PUID: 1000
-          PGID: 1000
+        options: >-
+          -e PUID=1000 \
+          -e PGID=1000 \
+          -p 9091:9091 \
+          -p 51413:51413 \
+          -p 51413:51413/udp \
     steps:
       - name: checkout
         uses: actions/checkout@master
