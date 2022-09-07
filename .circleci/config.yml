@@ -6,10 +6,18 @@ jobs:
   test:
     docker:
       - image: cimg/node:current
-      - image: linuxserver/transmission
     steps:
       - checkout
       - node/install-packages
+      - run:
+          name: setup transmission
+          command: |
+            sudo add-apt-repository ppa:transmissionbt/ppa
+            sudo apt-get update
+            sudo apt-get install transmission-cli transmission-common transmission-daemon
+            sudo service transmission-daemon start
+            sudo mkdir /downloads
+            mkdir ~/downloads
       - run:
           name: lint
           command: npm run lint
