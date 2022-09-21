@@ -279,6 +279,7 @@ export class Transmission implements TorrentClient {
     const results: AllClientData = {
       torrents,
       labels,
+      raw: listTorrents,
     };
     return results;
   }
@@ -451,6 +452,7 @@ export class Transmission implements TorrentClient {
       totalSize: torrent.totalSize,
       totalUploaded: torrent.uploadedEver,
       totalDownloaded: torrent.downloadedEver,
+      raw: torrent,
     };
   }
 }
