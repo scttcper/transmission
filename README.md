@@ -77,3 +77,21 @@ All of the following npm modules provide the same normalized functions along wit
 deluge - https://github.com/scttcper/deluge  
 qbittorrent - https://github.com/scttcper/qbittorrent  
 utorrent - https://github.com/scttcper/utorrent  
+
+### Start a test docker container
+
+```
+docker run -d \
+  --name=transmission \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e TZ=Etc/UTC \
+  -p 9091:9091 \
+  -p 51413:51413 \
+  -p 51413:51413/udp \
+  -v ~/Documents/transmission/config:/config \
+  -v ~/Documents/transmission/downloads:/downloads \
+  -v ~/Documents/transmission/watch:/watch \
+  --restart unless-stopped \
+  lscr.io/linuxserver/transmission:latest
+```

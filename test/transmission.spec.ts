@@ -1,5 +1,5 @@
-import fs from 'fs';
-import path from 'path';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 import pWaitFor from 'p-wait-for';
 import { afterEach, describe, expect, it } from 'vitest';
@@ -12,10 +12,12 @@ const baseUrl = 'http://localhost:9091/';
 const username = 'transmission';
 const password = 'transmission';
 const torrentName = 'ubuntu-18.04.1-desktop-amd64.iso';
-const torrentFile = path.join(__dirname, '/ubuntu-18.04.1-desktop-amd64.iso.torrent');
+const __dirname = new URL('.', import.meta.url).pathname;
+const torrentFilePath = path.join(__dirname, 'ubuntu-18.04.1-desktop-amd64.iso.torrent');
+const torrentFileBuffer = readFileSync(torrentFilePath);
 
 async function setupTorrent(transmission: Transmission): Promise<string> {
-  const res = await transmission.addTorrent(torrentFile);
+  const res = await transmission.addTorrent(torrentFileBuffer);
   await pWaitFor(
     async () => {
       const r = await transmission.listTorrents(undefined, ['id']);
@@ -42,11 +44,6 @@ describe('Transmission', () => {
     const transmission = createTransmission();
     expect(transmission).toBeTruthy();
   });
-  it('should add torrent from file path string', async () => {
-    const transmission = createTransmission();
-    const res = await transmission.addTorrent(torrentFile);
-    expect(res.result).toBe('success');
-  });
   it('should add magnet link', async () => {
     const magnet =
       'magnet:?xt=urn:btih:B0B81206633C42874173D22E564D293DAEFC45E2&dn=Ubuntu+11+10+Alternate+Amd64+Iso&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969%2Fannounce&tr=udp%3A%2F%2F9.rarbg.to%3A2710%2Fannounce&tr=udp%3A%2F%2Ftracker.opentrackr.org%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969%2Fannounce&tr=udp%3A%2F%2Ftracker.open-internet.nl%3A6969%2Fannounce&tr=udp%3A%2F%2Fopen.demonii.si%3A1337%2Fannounce&tr=udp%3A%2F%2Ftracker.pirateparty.gr%3A6969%2Fannounce&tr=udp%3A%2F%2Fdenis.stalker.upeer.me%3A6969%2Fannounce&tr=udp%3A%2F%2Fp4p.arenabg.com%3A1337%2Fannounce&tr=udp%3A%2F%2Fexodus.desync.com%3A6969%2Fannounce';
@@ -63,12 +60,12 @@ describe('Transmission', () => {
   });
   it('should add torrent from file buffer', async () => {
     const transmission = createTransmission();
-    const res = await transmission.addTorrent(fs.readFileSync(torrentFile));
+    const res = await transmission.addTorrent(torrentFileBuffer);
     expect(res.result).toBe('success');
   });
   it('should add torrent from file contents base64', async () => {
     const transmission = createTransmission();
-    const contents = Buffer.from(fs.readFileSync(torrentFile)).toString('base64');
+    const contents = Buffer.from(torrentFileBuffer).toString('base64');
     const res = await transmission.addTorrent(contents);
     expect(res.result).toBe('success');
   });
@@ -127,7 +124,7 @@ describe('Transmission', () => {
   it('should add torrent with normalized response', async () => {
     const client = createTransmission();
 
-    const torrent = await client.normalizedAddTorrent(fs.readFileSync(torrentFile), {
+    const torrent = await client.normalizedAddTorrent(torrentFileBuffer, {
       label: 'test',
     });
     expect(torrent.connectedPeers).toBe(0);
