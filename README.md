@@ -1,4 +1,4 @@
-# transmission [![npm](https://img.shields.io/npm/v/@ctrl/transmission.svg?maxAge=3600)](https://www.npmjs.com/package/@ctrl/transmission) [![CircleCI](https://circleci.com/gh/scttcper/transmission.svg?style=svg)](https://circleci.com/gh/scttcper/transmission) [![coverage status](https://codecov.io/gh/scttcper/transmission/branch/master/graph/badge.svg)](https://codecov.io/gh/scttcper/transmission)
+# transmission [![npm](https://img.shields.io/npm/v/@ctrl/transmission.svg?maxAge=3600)](https://www.npmjs.com/package/@ctrl/transmission) [![coverage status](https://codecov.io/gh/scttcper/transmission/branch/master/graph/badge.svg)](https://codecov.io/gh/scttcper/transmission)
 
 > TypeScript api wrapper for [transmission](https://transmissionbt.com/) using [got](https://github.com/sindresorhus/got)
 
