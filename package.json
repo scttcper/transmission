@@ -36,6 +36,7 @@
     "@ctrl/eslint-config": "4.0.7",
     "@sindresorhus/tsconfig": "4.0.0",
     "@types/node": "20.6.2",
+    "@vitest/coverage-v8": "0.34.4",
     "p-wait-for": "5.0.2",
     "typedoc": "0.25.1",
     "typescript": "5.2.2",
