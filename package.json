@@ -24,31 +24,27 @@
     "build:docs": "typedoc",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:ci": "vitest run --coverage"
+    "test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile=./junit.xml"
   },
   "dependencies": {
-    "@ctrl/magnet-link": "^3.1.1",
-    "@ctrl/shared-torrent": "^4.3.1",
-    "@ctrl/url-join": "^2.0.2",
-    "got": "^12.5.0"
+    "@ctrl/magnet-link": "^3.1.2",
+    "@ctrl/shared-torrent": "^5.0.0",
+    "ofetch": "^1.3.3",
+    "ufo": "^1.3.0"
   },
   "devDependencies": {
-    "@ctrl/eslint-config": "3.5.0",
-    "@sindresorhus/tsconfig": "3.0.1",
-    "@types/node": "18.7.18",
-    "@vitest/coverage-c8": "0.23.4",
-    "c8": "7.12.0",
-    "p-wait-for": "5.0.0",
-    "typedoc": "0.23.15",
-    "typescript": "4.8.3",
-    "vitest": "0.23.4"
-  },
-  "jest": {
-    "testEnvironment": "node",
-    "coverageProvider": "v8"
+    "@ctrl/eslint-config": "4.0.7",
+    "@sindresorhus/tsconfig": "4.0.0",
+    "@types/node": "20.6.5",
+    "@vitest/coverage-v8": "0.34.5",
+    "p-wait-for": "5.0.2",
+    "typedoc": "0.25.1",
+    "typescript": "5.2.2",
+    "vitest": "0.34.5"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "release": {
     "branches": [
@@ -56,6 +52,6 @@
     ]
   },
   "engines": {
-    "node": ">=14.16"
+    "node": ">=18"
   }
 }
