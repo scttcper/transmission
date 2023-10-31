@@ -1,6 +1,6 @@
 # transmission [![npm](https://img.shields.io/npm/v/@ctrl/transmission.svg?maxAge=3600)](https://www.npmjs.com/package/@ctrl/transmission) [![coverage status](https://codecov.io/gh/scttcper/transmission/branch/master/graph/badge.svg)](https://codecov.io/gh/scttcper/transmission)
 
-> TypeScript api wrapper for [transmission](https://transmissionbt.com/) using [got](https://github.com/sindresorhus/got)
+> TypeScript api wrapper for [transmission](https://transmissionbt.com/) using [ofetch](https://github.com/unjs/ofetch)
 
 ### Install
 
