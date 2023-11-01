@@ -21,10 +21,8 @@ jobs:
           - "51413:51413"
           - "51413:51413/udp"
     steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: setup node
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
         with:
           node-version: 20
           cache: 'npm'
@@ -48,7 +46,9 @@ jobs:
       pull-requests: write # to be able to comment on released pull requests
       id-token: write # to enable use of OIDC for npm provenance
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 20
