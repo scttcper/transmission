@@ -1,6 +1,6 @@
 import { FetchError, FetchResponse, ofetch } from 'ofetch';
 import { joinURL } from 'ufo';
-import { stringToBase64, uint8ArrayToBase64 } from 'uint8array-extras';
+import { uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { magnetDecode } from '@ctrl/magnet-link';
 import type {
@@ -189,7 +189,7 @@ export class Transmission implements TorrentClient {
 
   /**
    * Adding a torrent
-   * @param torrent a string of file path or contents of the file as base64 string
+   * @param torrent a stream of file content or contents of the file as base64 string
    */
   async addTorrent(
     torrent: string | Uint8Array,
@@ -202,7 +202,7 @@ export class Transmission implements TorrentClient {
     };
 
     if (typeof torrent === 'string') {
-      args.metainfo = stringToBase64(torrent);
+      args.metainfo = torrent;
     } else {
       args.metainfo = uint8ArrayToBase64(torrent);
     }
