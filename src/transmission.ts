@@ -1,6 +1,6 @@
 import { FetchError, FetchResponse, ofetch } from 'ofetch';
 import { joinURL } from 'ufo';
-import { stringToBase64, uint8ArrayToBase64} from 'uint8array-extras'
+import { stringToBase64, uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { magnetDecode } from '@ctrl/magnet-link';
 import type {
@@ -202,7 +202,7 @@ export class Transmission implements TorrentClient {
     };
 
     if (typeof torrent === 'string') {
-      args.metainfo = stringToBase64(torrent)
+      args.metainfo = stringToBase64(torrent);
     } else {
       args.metainfo = uint8ArrayToBase64(torrent);
     }
@@ -255,14 +255,14 @@ export class Transmission implements TorrentClient {
 
   async getAllData(): Promise<AllClientData> {
     const listTorrents = await this.listTorrents();
-    const torrents = listTorrents.arguments.torrents.map((n) => normalizeTorrentData(n));
+    const torrents = listTorrents.arguments.torrents.map(n => normalizeTorrentData(n));
     const labels: Label[] = [];
     for (const torrent of torrents) {
       if (!torrent.label) {
         continue;
       }
 
-      const existing = labels.find((n) => n.id === torrent.label);
+      const existing = labels.find(n => n.id === torrent.label);
       if (existing) {
         existing.count += 1;
         continue;

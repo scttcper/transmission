@@ -38,6 +38,8 @@
     "uint8array-extras": "^1.1.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.6.0",
+    "@ctrl/eslint-config-biome": "2.1.1",
     "@ctrl/magnet-link": "^4.0.2",
     "@ctrl/shared-torrent": "^6.0.0",
     "@sindresorhus/tsconfig": "5.0.0",
