@@ -1,5 +1,6 @@
 import { FetchError, FetchResponse, ofetch } from 'ofetch';
 import { joinURL } from 'ufo';
+import { uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { magnetDecode } from '@ctrl/magnet-link';
 import type {
@@ -188,10 +189,10 @@ export class Transmission implements TorrentClient {
 
   /**
    * Adding a torrent
-   * @param torrent a string of file path or contents of the file as base64 string
+   * @param torrent a stream of file content or contents of the file as base64 string
    */
   async addTorrent(
-    torrent: string | Buffer,
+    torrent: string | Uint8Array,
     options: Partial<AddTorrentOptions> = {},
   ): Promise<AddTorrentResponse> {
     const args: AddTorrentOptions = {
@@ -201,9 +202,9 @@ export class Transmission implements TorrentClient {
     };
 
     if (typeof torrent === 'string') {
-      args.metainfo = Buffer.from(torrent, 'base64').toString('base64');
+      args.metainfo = torrent;
     } else {
-      args.metainfo = torrent.toString('base64');
+      args.metainfo = uint8ArrayToBase64(torrent);
     }
 
     const res = await this.request<AddTorrentResponse>('torrent-add', args);
@@ -211,7 +212,7 @@ export class Transmission implements TorrentClient {
   }
 
   async normalizedAddTorrent(
-    torrent: string | Buffer,
+    torrent: string | Uint8Array,
     options: Partial<NormalizedAddTorrentOptions> = {},
   ): Promise<NormalizedTorrent> {
     const torrentOptions: Partial<AddTorrentOptions> = {};
@@ -254,14 +255,14 @@ export class Transmission implements TorrentClient {
 
   async getAllData(): Promise<AllClientData> {
     const listTorrents = await this.listTorrents();
-    const torrents = listTorrents.arguments.torrents.map((n) => normalizeTorrentData(n));
+    const torrents = listTorrents.arguments.torrents.map(n => normalizeTorrentData(n));
     const labels: Label[] = [];
     for (const torrent of torrents) {
       if (!torrent.label) {
         continue;
       }
 
-      const existing = labels.find((n) => n.id === torrent.label);
+      const existing = labels.find(n => n.id === torrent.label);
       if (existing) {
         existing.count += 1;
         continue;
