@@ -1,4 +1,4 @@
-import { FetchError, FetchResponse, ofetch } from 'ofetch';
+import { FetchError, ofetch } from 'ofetch';
 import { joinURL } from 'ufo';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 
@@ -354,7 +354,7 @@ export class Transmission implements TorrentClient {
     return res._data;
   }
 
-  async request<T>(method: string, args: any = {}): Promise<FetchResponse<T>> {
+  async request<T>(method: string, args: any = {}): Promise<ReturnType<typeof ofetch.raw<T>>> {
     if (!this.sessionId && method !== 'session-get') {
       await this.getSession();
     }
@@ -397,7 +397,7 @@ export class Transmission implements TorrentClient {
     } catch (error: any) {
       if (error instanceof FetchError && error.response.status === 409) {
         this.sessionId = error.response.headers.get('x-transmission-session-id');
-        // eslint-disable-next-line no-return-await
+        // eslint-disable-next-line no-return-await, @typescript-eslint/return-await
         return await this.request<T>(method, args);
       }
 
