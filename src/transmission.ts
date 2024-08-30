@@ -402,8 +402,7 @@ export class Transmission implements TorrentClient {
         return await this.request<T>(method, args);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-throw-literal
-      throw error;
+      throw error as Error;
     }
   }
 

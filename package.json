@@ -34,21 +34,21 @@
     "@ctrl/magnet-link": "^4.0.2",
     "@ctrl/shared-torrent": "^6.0.0",
     "ofetch": "^1.3.4",
-    "ufo": "^1.5.3",
-    "uint8array-extras": "^1.2.0"
+    "ufo": "^1.5.4",
+    "uint8array-extras": "^1.4.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.8.3",
-    "@ctrl/eslint-config-biome": "3.1.3",
+    "@ctrl/eslint-config-biome": "4.1.5",
     "@ctrl/magnet-link": "^4.0.2",
     "@ctrl/shared-torrent": "^6.0.0",
     "@sindresorhus/tsconfig": "6.0.0",
-    "@types/node": "20.14.9",
-    "@vitest/coverage-v8": "1.6.0",
+    "@types/node": "22.5.1",
+    "@vitest/coverage-v8": "2.0.5",
     "p-wait-for": "5.0.2",
-    "typedoc": "0.26.3",
-    "typescript": "5.5.3",
-    "vitest": "1.6.0"
+    "typedoc": "0.26.6",
+    "typescript": "5.5.4",
+    "vitest": "2.0.5"
   },
   "publishConfig": {
     "access": "public",
