@@ -148,8 +148,9 @@ export class Transmission implements TorrentClient {
 
   /**
    * Removing a Torrent
+   * @param removeData (default: false) If true, remove the downloaded data.
    */
-  async removeTorrent(id: NormalizedTorrentIds, removeData = true): Promise<AddTorrentResponse> {
+  async removeTorrent(id: NormalizedTorrentIds, removeData = false): Promise<AddTorrentResponse> {
     const ids = this._handleNormalizedIds(id);
     const res = await this.request<AddTorrentResponse>('torrent-remove', {
       ids,
