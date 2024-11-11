@@ -380,7 +380,6 @@ export class Transmission implements TorrentClient {
         }),
         headers,
         retry: 0,
-        // allow proxy agent
         timeout: this.config.timeout,
         responseType: 'json',
         parseResponse(body) {
@@ -390,8 +389,7 @@ export class Transmission implements TorrentClient {
             return body;
           }
         },
-        // @ts-expect-error agent is not in the type
-        agent: this.config.agent,
+        dispatcher: this.config.dispatcher,
       });
 
       return res;
