@@ -32,23 +32,24 @@
   },
   "dependencies": {
     "@ctrl/magnet-link": "^4.0.2",
-    "@ctrl/shared-torrent": "^6.1.0",
+    "@ctrl/shared-torrent": "^6.2.1",
     "ofetch": "^1.4.1",
+    "type-fest": "^4.30.2",
     "ufo": "^1.5.4",
     "uint8array-extras": "^1.4.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
-    "@ctrl/eslint-config-biome": "4.2.11",
+    "@ctrl/eslint-config-biome": "4.3.1",
     "@ctrl/magnet-link": "^4.0.2",
-    "@ctrl/shared-torrent": "^6.1.0",
-    "@sindresorhus/tsconfig": "6.0.0",
-    "@types/node": "22.9.0",
-    "@vitest/coverage-v8": "2.1.4",
+    "@ctrl/shared-torrent": "^6.2.1",
+    "@sindresorhus/tsconfig": "7.0.0",
+    "@types/node": "22.10.2",
+    "@vitest/coverage-v8": "2.1.8",
     "p-wait-for": "5.0.2",
-    "typedoc": "0.26.11",
-    "typescript": "5.6.3",
-    "vitest": "2.1.4"
+    "typedoc": "0.27.5",
+    "typescript": "5.7.2",
+    "vitest": "2.1.8"
   },
   "publishConfig": {
     "access": "public",

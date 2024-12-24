@@ -1,4 +1,5 @@
 import { FetchError, ofetch } from 'ofetch';
+import type { Jsonify } from 'type-fest';
 import { joinURL } from 'ufo';
 import { uint8ArrayToBase64 } from 'uint8array-extras';
 
@@ -9,7 +10,8 @@ import type {
   Label,
   NormalizedTorrent,
   TorrentClient,
-  TorrentSettings,
+  TorrentClientConfig,
+  TorrentClientState,
 } from '@ctrl/shared-torrent';
 
 import { normalizeTorrentData } from './normalizeTorrentData.js';
@@ -27,7 +29,11 @@ import type {
   TorrentIds,
 } from './types.js';
 
-const defaults: TorrentSettings = {
+interface TransmissionState extends TorrentClientState {
+  auth?: { sessionId: string };
+}
+
+const defaults: TorrentClientConfig = {
   baseUrl: 'http://localhost:9091/',
   path: '/transmission/rpc',
   username: '',
@@ -36,12 +42,29 @@ const defaults: TorrentSettings = {
 };
 
 export class Transmission implements TorrentClient {
-  config: TorrentSettings;
+  static createFromState(
+    config: Readonly<TorrentClientConfig>,
+    state: Readonly<Jsonify<TransmissionState>>,
+  ): Transmission {
+    const client = new Transmission(config);
+    client.state = {
+      ...state,
+      auth: {
+        sessionId: state.auth?.sessionId,
+      },
+    };
+    return client;
+  }
 
-  sessionId?: string;
+  config: TorrentClientConfig;
+  state: TransmissionState = {};
 
-  constructor(options: Partial<TorrentSettings> = {}) {
+  constructor(options: Partial<TorrentClientConfig> = {}) {
     this.config = { ...defaults, ...options };
+  }
+
+  exportState(): Jsonify<TransmissionState> {
+    return JSON.parse(JSON.stringify(this.state));
   }
 
   async getSession(): Promise<SessionResponse> {
@@ -356,12 +379,12 @@ export class Transmission implements TorrentClient {
   }
 
   async request<T>(method: string, args: any = {}): Promise<ReturnType<typeof ofetch.raw<T>>> {
-    if (!this.sessionId && method !== 'session-get') {
+    if (!this.state.auth?.sessionId && method !== 'session-get') {
       await this.getSession();
     }
 
     const headers: Record<string, string | undefined> = {
-      'X-Transmission-Session-Id': this.sessionId,
+      'X-Transmission-Session-Id': this.state.auth?.sessionId,
       'Content-Type': 'application/json',
     };
     if (this.config.username || this.config.password) {
@@ -395,7 +418,9 @@ export class Transmission implements TorrentClient {
       return res;
     } catch (error: any) {
       if (error instanceof FetchError && error.response.status === 409) {
-        this.sessionId = error.response.headers.get('x-transmission-session-id');
+        this.state.auth = {
+          sessionId: error.response.headers.get('x-transmission-session-id'),
+        };
         // eslint-disable-next-line no-return-await, @typescript-eslint/return-await
         return await this.request<T>(method, args);
       }
