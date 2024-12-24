@@ -71,6 +71,15 @@ const res = await client.removeTorrent('torrent_id', true);
 console.log(res);
 ```
 
+##### export and create from state
+
+If you're shutting down the server often (serverless?) you can export the state
+
+```ts
+const state = client.exportState()
+const client = Transmission.createFromState(config, state);
+```
+
 ### See Also
 All of the following npm modules provide the same normalized functions along with supporting the unique apis for each client.  
 
