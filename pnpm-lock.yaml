@@ -42,6 +42,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: 3.2.4
         version: 3.2.4(vitest@3.2.4(@types/node@24.1.0)(yaml@2.8.0))
+      eslint:
+        specifier: 9.31.0
+        version: 9.31.0
       p-wait-for:
         specifier: 5.0.2
         version: 5.0.2
