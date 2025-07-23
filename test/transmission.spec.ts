@@ -105,7 +105,8 @@ describe('Transmission', () => {
     await transmission.queueTop(key);
     await transmission.queueBottom(key);
   });
-  it('should report free space', async () => {
+  // Sometimes reports No such file or directory
+  it.skip('should report free space', async () => {
     const transmission = createTransmission();
     const p = '/downloads';
     const res = await transmission.freeSpace(p);
