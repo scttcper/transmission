@@ -25,7 +25,7 @@ jobs:
 
       # https://github.com/wyvox/action-setup-pnpm
       - uses: wyvox/action-setup-pnpm@v3
-        with: { node-version: 22, pnpm-version: 9 }
+        with: { node-version: 24 }
 
       - name: lint
         run: pnpm run lint
@@ -53,7 +53,7 @@ jobs:
 
       # https://github.com/wyvox/action-setup-pnpm
       - uses: wyvox/action-setup-pnpm@v3
-        with: { node-version: 22, pnpm-version: 9 }
+        with: { node-version: 24 }
 
       - name: release
         run: npx semantic-release
