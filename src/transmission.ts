@@ -216,7 +216,7 @@ export class Transmission implements TorrentClient {
    * @param torrent a stream of file content or contents of the file as base64 string
    */
   async addTorrent(
-    torrent: string | Uint8Array,
+    torrent: string | Uint8Array<ArrayBuffer>,
     options: Partial<AddTorrentOptions> = {},
   ): Promise<AddTorrentResponse> {
     const args: AddTorrentOptions = {
@@ -236,7 +236,7 @@ export class Transmission implements TorrentClient {
   }
 
   async normalizedAddTorrent(
-    torrent: string | Uint8Array,
+    torrent: string | Uint8Array<ArrayBuffer>,
     options: Partial<NormalizedAddTorrentOptions> = {},
   ): Promise<NormalizedTorrent> {
     const torrentOptions: Partial<AddTorrentOptions> = {};

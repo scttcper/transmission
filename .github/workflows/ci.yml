@@ -17,9 +17,9 @@ jobs:
           PGID: 1000
           TZ: Etc/UTC
         ports:
-          - "9091:9091"
-          - "51413:51413"
-          - "51413:51413/udp"
+          - '9091:9091'
+          - '51413:51413'
+          - '51413:51413/udp'
     steps:
       - uses: actions/checkout@v4
 
