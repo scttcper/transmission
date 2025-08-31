@@ -408,7 +408,7 @@ export class Transmission implements TorrentClient {
         parseResponse(body) {
           try {
             return JSON.parse(body);
-          } catch (error) {
+          } catch {
             return body;
           }
         },
