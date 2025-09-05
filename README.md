@@ -27,7 +27,7 @@ async function main() {
 ### Api
 
 Docs: https://transmission.vercel.app  
-API Docs: https://github.com/transmission/transmission/blob/master/extras/rpc-spec.txt
+API Docs: https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md
 
 ### Normalized API
 
