@@ -1,7 +1,7 @@
 {
   "name": "@ctrl/transmission",
   "version": "0.0.0-placeholder",
-  "description": "TypeScript api wrapper for transmission using got",
+  "description": "TypeScript api wrapper for transmission using ofetch",
   "author": "Scott Cooper <scttcper@gmail.com>",
   "license": "MIT",
   "repository": "scttcper/transmission",
