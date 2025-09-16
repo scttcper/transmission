@@ -4,7 +4,10 @@
   "description": "TypeScript api wrapper for transmission using ofetch",
   "author": "Scott Cooper <scttcper@gmail.com>",
   "license": "MIT",
-  "repository": "scttcper/transmission",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scttcper/transmission.git"
+  },
   "keywords": [
     "transmission",
     "typescript"
