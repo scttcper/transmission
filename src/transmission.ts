@@ -421,7 +421,6 @@ export class Transmission implements TorrentClient {
         this.state.auth = {
           sessionId: error.response.headers.get('x-transmission-session-id'),
         };
-        // eslint-disable-next-line no-return-await, @typescript-eslint/return-await
         return await this.request<T>(method, args);
       }
 
