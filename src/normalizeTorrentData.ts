@@ -1,5 +1,4 @@
-import type { NormalizedTorrent } from '@ctrl/shared-torrent';
-import { TorrentState } from '@ctrl/shared-torrent';
+import { TorrentState, type NormalizedTorrent } from '@ctrl/shared-torrent';
 
 import type { Torrent } from './types.js';
 

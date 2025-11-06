@@ -23,7 +23,7 @@ async function setupTorrent(transmission: Transmission): Promise<string> {
       const r = await transmission.listTorrents(undefined, ['id']);
       return r.arguments.torrents.length === 1;
     },
-    { timeout: 10000, interval: 200 },
+    { timeout: 10_000, interval: 200 },
   );
   return res.arguments['torrent-added'].hashString;
 }
@@ -143,7 +143,7 @@ describe('Transmission', () => {
     expect(torrent.totalDownloaded).toBe(0);
     expect(torrent.totalPeers).toBe(0);
     expect(torrent.totalSeeds).toBe(0);
-    expect(torrent.totalSelected).toBe(1953349632);
+    expect(torrent.totalSelected).toBe(1_953_349_632);
     // expect(torrent.totalSize).toBe(undefined);
     expect(torrent.totalUploaded).toBe(0);
     expect(torrent.uploadSpeed).toBe(0);
