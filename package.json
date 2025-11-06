@@ -1,6 +1,6 @@
 {
   "name": "@ctrl/transmission",
-  "version": "7.5.0",
+  "version": "7.6.0",
   "description": "TypeScript api wrapper for transmission using ofetch",
   "author": "Scott Cooper <scttcper@gmail.com>",
   "license": "MIT",
