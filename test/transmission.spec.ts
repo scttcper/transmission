@@ -1,10 +1,9 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 
+import { TorrentState } from '@ctrl/shared-torrent';
 import pWaitFor from 'p-wait-for';
 import { afterEach, describe, expect, it } from 'vitest';
-
-import { TorrentState } from '@ctrl/shared-torrent';
 
 import { Transmission } from '../src/index.js';
 

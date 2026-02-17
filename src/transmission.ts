@@ -1,8 +1,3 @@
-import { FetchError, ofetch } from 'ofetch';
-import type { Jsonify } from 'type-fest';
-import { joinURL } from 'ufo';
-import { uint8ArrayToBase64 } from 'uint8array-extras';
-
 import { magnetDecode } from '@ctrl/magnet-link';
 import type {
   AddTorrentOptions as NormalizedAddTorrentOptions,
@@ -13,6 +8,10 @@ import type {
   TorrentClientConfig,
   TorrentClientState,
 } from '@ctrl/shared-torrent';
+import { FetchError, ofetch } from 'ofetch';
+import type { Jsonify } from 'type-fest';
+import { joinURL } from 'ufo';
+import { uint8ArrayToBase64 } from 'uint8array-extras';
 
 import { normalizeTorrentData } from './normalizeTorrentData.js';
 import type {

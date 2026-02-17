@@ -22,7 +22,7 @@ jobs:
           - '51413:51413/udp'
     steps:
       # https://github.com/actions/checkout
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       # https://github.com/wyvox/action-setup-pnpm
       - uses: wyvox/action-setup-pnpm@v3
@@ -33,10 +33,4 @@ jobs:
         run: pnpm run lint
 
       - name: test
-        run: pnpm run test:ci
-
-      # https://github.com/codecov/codecov-action
-      - name: coverage
-        uses: codecov/codecov-action@v5
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
+        run: pnpm run test

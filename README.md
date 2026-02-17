@@ -1,6 +1,4 @@
-# transmission [![npm](https://img.shields.io/npm/v/@ctrl/transmission.svg?maxAge=3600)](https://www.npmjs.com/package/@ctrl/transmission) [![coverage status](https://codecov.io/gh/scttcper/transmission/branch/master/graph/badge.svg)](https://codecov.io/gh/scttcper/transmission)
-
-> TypeScript api wrapper for [transmission](https://transmissionbt.com/) using [ofetch](https://github.com/unjs/ofetch)
+# transmission [![npm](https://img.shields.io/npm/v/@ctrl/transmission.svg?maxAge=3600)](https://www.npmjs.com/package/@ctrl/transmission)
 
 ### Install
 
@@ -26,7 +24,7 @@ async function main() {
 
 ### Api
 
-Docs: https://transmission.vercel.app  
+Docs: https://transmission.ep.workers.dev  
 API Docs: https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md
 
 ### Normalized API

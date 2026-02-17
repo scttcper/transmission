@@ -1,60 +1,55 @@
 {
   "name": "@ctrl/transmission",
-  "version": "7.6.0",
+  "version": "0.0.0-placeholder",
   "description": "TypeScript api wrapper for transmission using ofetch",
-  "author": "Scott Cooper <scttcper@gmail.com>",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/scttcper/transmission.git"
-  },
   "keywords": [
     "transmission",
     "typescript"
   ],
-  "type": "module",
-  "main": "./dist/src/index.js",
-  "typings": "./dist/src/index.d.ts",
+  "license": "MIT",
+  "author": "Scott Cooper <scttcper@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/scttcper/transmission.git"
+  },
   "files": [
     "dist/src"
   ],
+  "type": "module",
   "sideEffects": false,
-  "scripts": {
-    "lint": "oxlint . && prettier --check . --experimental-cli",
-    "lint:fix": "oxlint . --fix && prettier --write . --log-level=error --experimental-cli",
-    "prepare": "npm run build",
-    "build": "tsc",
-    "build:docs": "typedoc",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:ci": "vitest run --coverage --reporter=default --reporter=junit --outputFile=./junit.xml"
-  },
-  "dependencies": {
-    "@ctrl/magnet-link": "^4.2.0",
-    "@ctrl/shared-torrent": "^6.5.0",
-    "ofetch": "^1.5.1",
-    "type-fest": "^5.2.0",
-    "ufo": "^1.6.1",
-    "uint8array-extras": "^1.5.0"
-  },
-  "devDependencies": {
-    "@ctrl/oxlint-config": "1.3.2",
-    "@ctrl/magnet-link": "4.2.0",
-    "@ctrl/shared-torrent": "6.5.0",
-    "@sindresorhus/tsconfig": "8.1.0",
-    "@trivago/prettier-plugin-sort-imports": "6.0.0",
-    "@types/node": "24.10.0",
-    "@vitest/coverage-v8": "4.0.7",
-    "oxlint": "1.26.0",
-    "p-wait-for": "6.0.0",
-    "prettier": "3.6.2",
-    "typedoc": "0.28.14",
-    "typescript": "5.9.3",
-    "vitest": "4.0.7"
-  },
+  "main": "./dist/src/index.js",
+  "typings": "./dist/src/index.d.ts",
   "publishConfig": {
     "access": "public",
     "provenance": true
+  },
+  "scripts": {
+    "lint": "oxlint . && oxfmt --check && ",
+    "lint:fix": "oxlint . --fix && oxfmt",
+    "prepare": "pnpm run build",
+    "build": "tsc",
+    "build:docs": "typedoc",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@ctrl/magnet-link": "^4.3.0",
+    "@ctrl/shared-torrent": "^6.5.1",
+    "ofetch": "^1.5.1",
+    "type-fest": "^5.4.4",
+    "ufo": "^1.6.3",
+    "uint8array-extras": "^1.5.0"
+  },
+  "devDependencies": {
+    "@ctrl/oxlint-config": "1.4.0",
+    "@sindresorhus/tsconfig": "8.1.0",
+    "@types/node": "25.2.3",
+    "oxfmt": "0.33.0",
+    "oxlint": "1.48.0",
+    "p-wait-for": "6.0.0",
+    "typedoc": "0.28.17",
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
   },
   "release": {
     "branches": [
@@ -62,27 +57,7 @@
     ]
   },
   "engines": {
-    "node": ">=18"
+    "node": ">20"
   },
-  "packageManager": "pnpm@10.20.0",
-  "prettier": {
-    "singleQuote": true,
-    "trailingComma": "all",
-    "arrowParens": "avoid",
-    "semi": true,
-    "printWidth": 100,
-    "plugins": [
-      "@trivago/prettier-plugin-sort-imports"
-    ],
-    "importOrder": [
-      "^node:.*$",
-      "<THIRD_PARTY_MODULES>",
-      "^(@ctrl)(/.*|$)",
-      "^\\.\\./(?!.*\\.css$)",
-      "^\\./(?!.*\\.css$)(?=.*/)",
-      "^\\./(?!.*\\.css$)(?!.*/)"
-    ],
-    "importOrderSeparation": true,
-    "importOrderSortSpecifiers": false
-  }
+  "packageManager": "pnpm@10.29.3"
 }
