@@ -24,7 +24,7 @@
     "provenance": true
   },
   "scripts": {
-    "lint": "oxlint . && oxfmt --check && ",
+    "lint": "oxlint . && oxfmt --check",
     "lint:fix": "oxlint . --fix && oxfmt",
     "prepare": "pnpm run build",
     "build": "tsc",
