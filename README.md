@@ -29,7 +29,7 @@ API Docs: https://github.com/transmission/transmission/blob/main/docs/rpc-spec.m
 
 ### Normalized API
 
-These functions have been normalized between torrent clients. Can easily support multiple torrent clients. See below for alternative supported torrent clients
+These functions are normalized through [@ctrl/shared-torrent](https://github.com/scttcper/shared-torrent), which makes it easier to support multiple torrent clients. See below for alternative supported torrent clients.
 
 ##### getAllData
 
@@ -87,9 +87,11 @@ const client = Transmission.createFromState(config, state);
 
 All of the following npm modules provide the same normalized functions along with supporting the unique apis for each client.
 
-deluge - https://github.com/scttcper/deluge  
-qbittorrent - https://github.com/scttcper/qbittorrent  
-utorrent - https://github.com/scttcper/utorrent
+- shared types - [@ctrl/shared-torrent](https://github.com/scttcper/shared-torrent)  
+- deluge - [@ctrl/deluge](https://github.com/scttcper/deluge)  
+- qbittorrent - [@ctrl/qbittorrent](https://github.com/scttcper/qbittorrent)  
+- utorrent - [@ctrl/utorrent](https://github.com/scttcper/utorrent)  
+- rtorrent - [@ctrl/rtorrent](https://github.com/scttcper/rtorrent)
 
 ### Start a test docker container
 
