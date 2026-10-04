@@ -6,6 +6,7 @@
     "transmission",
     "typescript"
   ],
+  "homepage": "https://transmission.ep.workers.dev",
   "license": "MIT",
   "author": "Scott Cooper <scttcper@gmail.com>",
   "repository": {
