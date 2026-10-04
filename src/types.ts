@@ -37,11 +37,6 @@ export interface SessionResponse extends DefaultResponse {
   arguments: SessionArguments;
 }
 
-export interface FreeSpaceResponse extends DefaultResponse {
-  path: string;
-  'size-bytes': number;
-}
-
 /**
  * "ids", which specifies which torrents to use.
  * All torrents are used if the "ids" argument is omitted.

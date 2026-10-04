@@ -87,10 +87,10 @@ const client = Transmission.createFromState(config, state);
 
 All of the following npm modules provide the same normalized functions along with supporting the unique apis for each client.
 
-- shared types - [@ctrl/shared-torrent](https://github.com/scttcper/shared-torrent)  
-- deluge - [@ctrl/deluge](https://github.com/scttcper/deluge)  
-- qbittorrent - [@ctrl/qbittorrent](https://github.com/scttcper/qbittorrent)  
-- utorrent - [@ctrl/utorrent](https://github.com/scttcper/utorrent)  
+- shared types - [@ctrl/shared-torrent](https://github.com/scttcper/shared-torrent)
+- deluge - [@ctrl/deluge](https://github.com/scttcper/deluge)
+- qbittorrent - [@ctrl/qbittorrent](https://github.com/scttcper/qbittorrent)
+- utorrent - [@ctrl/utorrent](https://github.com/scttcper/utorrent)
 - rtorrent - [@ctrl/rtorrent](https://github.com/scttcper/rtorrent)
 
 ### Start a test docker container
