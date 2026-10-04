@@ -3,9 +3,9 @@
   "printWidth": 100,
   "singleQuote": true,
   "arrowParens": "avoid",
-  "experimentalSortImports": {
+  "sortImports": {
     "groups": ["side_effect", "builtin", "external", "internal", "parent", "index", "sibling"],
     "newlinesBetween": true
   },
-  "experimentalSortPackageJson": true
+  "sortPackageJson": true
 }
