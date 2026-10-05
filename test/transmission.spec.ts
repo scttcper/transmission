@@ -131,6 +131,7 @@ describe('Transmission', () => {
     expect(torrent.downloadSpeed).toBe(0);
     expect(torrent.eta).toBe(-1);
     expect(torrent.isCompleted).toBe(false);
+    expect(torrent.dateCompleted).toBeUndefined();
     expect(torrent.label).toBe('test');
     expect(torrent.name).toBe(torrentName);
     expect(torrent.progress).toBeGreaterThanOrEqual(0);

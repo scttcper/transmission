@@ -4,7 +4,9 @@ import type { Torrent } from './types.js';
 
 export function normalizeTorrentData(torrent: Torrent): NormalizedTorrent {
   const dateAdded = new Date(torrent.addedDate * 1000).toISOString();
-  const dateCompleted = new Date(torrent.doneDate * 1000).toISOString();
+  // doneDate is 0 until the torrent finishes
+  const dateCompleted =
+    torrent.doneDate > 0 ? new Date(torrent.doneDate * 1000).toISOString() : undefined;
 
   // normalize state to enum
   // https://github.com/transmission/transmission/blob/c11f2870fd18ff781ca06ce84b6d43541f3293dd/web/javascript/torrent.js#L18
