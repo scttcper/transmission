@@ -1,12 +1,13 @@
 import { magnetDecode } from '@ctrl/magnet-link';
-import type {
-  AddTorrentOptions as NormalizedAddTorrentOptions,
-  AllClientData,
-  Label,
-  NormalizedTorrent,
-  TorrentClient,
-  TorrentClientConfig,
-  TorrentClientState,
+import {
+  type AddTorrentOptions as NormalizedAddTorrentOptions,
+  type AllClientData,
+  type Label,
+  type NormalizedTorrent,
+  type TorrentClient,
+  type TorrentClientConfig,
+  TorrentClientError,
+  type TorrentClientState,
 } from '@ctrl/shared-torrent';
 import { FetchError, ofetch } from 'ofetch';
 import type { Jsonify } from 'type-fest';
@@ -90,11 +91,13 @@ export class Transmission implements TorrentClient {
 
   async queueUp(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
+    await this.assertTorrentsExist(ids);
     await this.request<DefaultResponse>('queue-move-up', { ids });
   }
 
   async queueDown(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
+    await this.assertTorrentsExist(ids);
     await this.request<DefaultResponse>('queue-move-down', { ids });
   }
 
@@ -105,11 +108,13 @@ export class Transmission implements TorrentClient {
 
   async pauseTorrent(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
+    await this.assertTorrentsExist(ids);
     await this.request<DefaultResponse>('torrent-stop', { ids });
   }
 
   async resumeTorrent(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
+    await this.assertTorrentsExist(ids);
     await this.request<DefaultResponse>('torrent-start', { ids });
   }
 
@@ -167,17 +172,10 @@ export class Transmission implements TorrentClient {
   /**
    * Removing a Torrent
    * @param removeData (default: false) If true, remove the downloaded data.
-   * @throws when a torrent doesn't exist, Transmission silently ignores unknown ids
    */
   async removeTorrent(id: NormalizedTorrentIds, removeData = false): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    if (ids !== 'recently-active') {
-      const requested = new Set(Array.isArray(ids) ? ids : [ids]);
-      const res = await this.request<GetTorrentRepsonse>('torrent-get', { ids, fields: ['id'] });
-      if (res._data.arguments.torrents.length < requested.size) {
-        throw new Error('Torrent not found');
-      }
-    }
+    await this.assertTorrentsExist(ids);
 
     await this.request<DefaultResponse>('torrent-remove', {
       ids,
@@ -275,7 +273,7 @@ export class Transmission implements TorrentClient {
   async getTorrent(id: NormalizedTorrentIds): Promise<NormalizedTorrent> {
     const result = await this.listTorrents(id);
     if (!result.arguments.torrents || result.arguments.torrents.length === 0) {
-      throw new Error('Torrent not found');
+      throw new TorrentClientError('Torrent not found', 'torrent_not_found');
     }
 
     return normalizeTorrentData(result.arguments.torrents[0]);
@@ -401,8 +399,9 @@ export class Transmission implements TorrentClient {
 
     const url = joinURL(this.config.baseUrl, this.config.path);
 
+    let res: Awaited<ReturnType<typeof ofetch.raw<T>>>;
     try {
-      const res = await ofetch.raw<T>(url, {
+      res = await ofetch.raw<T>(url, {
         method: 'POST',
         body: JSON.stringify({
           method,
@@ -421,17 +420,46 @@ export class Transmission implements TorrentClient {
         },
         dispatcher: this.config.dispatcher,
       });
-
-      return res;
-    } catch (error: any) {
-      if (error instanceof FetchError && error.response.status === 409) {
+    } catch (error) {
+      if (error instanceof FetchError && error.response?.status === 409) {
         this.state.auth = {
           sessionId: error.response.headers.get('x-transmission-session-id'),
         };
-        return await this.request<T>(method, args);
+        return this.request<T>(method, args);
       }
 
-      throw error as Error;
+      if (error instanceof FetchError) {
+        throw new TorrentClientError(
+          error.message,
+          error.status === 401 || error.status === 403 ? 'unauthorized' : 'request_failed',
+          { status: error.status, cause: error },
+        );
+      }
+
+      throw new TorrentClientError((error as Error).message, 'request_failed', { cause: error });
+    }
+
+    // transmission responds 200 with the error in `result`
+    const result = (res._data as { result?: string } | undefined)?.result;
+    if (result !== undefined && result !== 'success') {
+      throw new TorrentClientError(result, 'client_error');
+    }
+
+    return res;
+  }
+
+  /**
+   * Transmission silently ignores unknown ids, the normalized methods throw instead
+   */
+  private async assertTorrentsExist(ids: TorrentIds): Promise<void> {
+    if (ids === 'recently-active') {
+      return;
+    }
+
+    const requested = new Set(Array.isArray(ids) ? ids : [ids]);
+    const res = await this.request<GetTorrentRepsonse>('torrent-get', { ids, fields: ['id'] });
+    if (res._data.arguments.torrents.length < requested.size) {
+      throw new TorrentClientError('Torrent not found', 'torrent_not_found');
     }
   }
 
