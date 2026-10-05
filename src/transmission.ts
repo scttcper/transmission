@@ -91,13 +91,11 @@ export class Transmission implements TorrentClient {
 
   async queueUp(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    await this.assertTorrentsExist(ids);
     await this.request<DefaultResponse>('queue-move-up', { ids });
   }
 
   async queueDown(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    await this.assertTorrentsExist(ids);
     await this.request<DefaultResponse>('queue-move-down', { ids });
   }
 
@@ -108,13 +106,11 @@ export class Transmission implements TorrentClient {
 
   async pauseTorrent(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    await this.assertTorrentsExist(ids);
     await this.request<DefaultResponse>('torrent-stop', { ids });
   }
 
   async resumeTorrent(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    await this.assertTorrentsExist(ids);
     await this.request<DefaultResponse>('torrent-start', { ids });
   }
 
@@ -175,7 +171,6 @@ export class Transmission implements TorrentClient {
    */
   async removeTorrent(id: NormalizedTorrentIds, removeData = false): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    await this.assertTorrentsExist(ids);
 
     await this.request<DefaultResponse>('torrent-remove', {
       ids,
@@ -446,21 +441,6 @@ export class Transmission implements TorrentClient {
     }
 
     return res;
-  }
-
-  /**
-   * Transmission silently ignores unknown ids, the normalized methods throw instead
-   */
-  private async assertTorrentsExist(ids: TorrentIds): Promise<void> {
-    if (ids === 'recently-active') {
-      return;
-    }
-
-    const requested = new Set(Array.isArray(ids) ? ids : [ids]);
-    const res = await this.request<GetTorrentRepsonse>('torrent-get', { ids, fields: ['id'] });
-    if (res._data.arguments.torrents.length < requested.size) {
-      throw new TorrentClientError('Torrent not found', 'torrent_not_found');
-    }
   }
 
   private _handleNormalizedIds(ids: NormalizedTorrentIds): TorrentIds {

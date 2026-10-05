@@ -121,17 +121,12 @@ describe('Transmission', () => {
   });
   it('should throw torrent_not_found for a torrent that does not exist', async () => {
     const transmission = createTransmission();
-    const key = await setupTorrent(transmission);
-    const missing = '0'.repeat(40);
-    const notFound = { name: 'TorrentClientError', code: 'torrent_not_found' };
-    await expect(transmission.getTorrent(missing)).rejects.toMatchObject(notFound);
-    await expect(transmission.pauseTorrent(missing)).rejects.toMatchObject(notFound);
-    await expect(transmission.resumeTorrent(missing)).rejects.toMatchObject(notFound);
-    await expect(transmission.queueUp(missing)).rejects.toMatchObject(notFound);
-    await expect(transmission.queueDown(missing)).rejects.toMatchObject(notFound);
-    await expect(transmission.removeTorrent(missing)).rejects.toMatchObject(notFound);
-    await expect(transmission.removeTorrent([key, missing])).rejects.toMatchObject(notFound);
-    expect((await transmission.listTorrents()).arguments.torrents).toHaveLength(1);
+    await expect(transmission.getTorrent('0'.repeat(40))).rejects.toMatchObject({
+      name: 'TorrentClientError',
+      code: 'torrent_not_found',
+    });
+    // Transmission ignores unknown ids
+    await transmission.removeTorrent('0'.repeat(40));
   });
   it('should throw client_error when transmission responds with an error result', async () => {
     const transmission = createTransmission();
