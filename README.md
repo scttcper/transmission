@@ -1,10 +1,14 @@
 # transmission [![npm](https://img.shields.io/npm/v/@ctrl/transmission.svg?maxAge=3600)](https://www.npmjs.com/package/@ctrl/transmission)
 
+> TypeScript api wrapper for [Transmission](https://transmissionbt.com/) using [ofetch](https://github.com/unjs/ofetch)
+
 ### Install
 
 ```sh
 npm install @ctrl/transmission
 ```
+
+Requires Node.js 22 or newer.
 
 ### Use
 
@@ -22,10 +26,15 @@ async function main() {
 }
 ```
 
-### Api
+### API
 
 Docs: https://transmission.ep.workers.dev  
 API Docs: https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md
+
+Things that work differently from the other clients:
+
+- `label` is the first of Transmission's `labels`, `normalizedAddTorrent` sets `labels: [label]`
+- `totalSeeds`/`totalPeers` come from tracker scrapes and are `0` until a tracker responds
 
 ### Normalized API
 
