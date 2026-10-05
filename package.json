@@ -19,7 +19,14 @@
   "type": "module",
   "sideEffects": false,
   "main": "./dist/src/index.js",
-  "typings": "./dist/src/index.d.ts",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "publishConfig": {
     "access": "public",
     "provenance": true
@@ -59,7 +66,7 @@
     ]
   },
   "engines": {
-    "node": ">20"
+    "node": ">=22"
   },
   "packageManager": "pnpm@12.9.1"
 }
