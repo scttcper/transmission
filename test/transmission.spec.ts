@@ -5,7 +5,7 @@ import { TorrentState } from '@ctrl/shared-torrent';
 import pWaitFor from 'p-wait-for';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { Transmission } from '../src/index.js';
+import { Transmission, TorrentClientError } from '../src/index.js';
 
 const baseUrl = 'http://localhost:9091/';
 const username = 'transmission';
@@ -119,14 +119,28 @@ describe('Transmission', () => {
     await transmission.removeTorrent(key, false);
     expect((await transmission.listTorrents()).arguments.torrents).toHaveLength(0);
   });
-  it('should throw when removing a torrent that does not exist', async () => {
+  it('should throw torrent_not_found for a torrent that does not exist', async () => {
     const transmission = createTransmission();
-    const key = await setupTorrent(transmission);
-    await expect(transmission.removeTorrent('0'.repeat(40))).rejects.toThrow('Torrent not found');
-    await expect(transmission.removeTorrent([key, '0'.repeat(40)])).rejects.toThrow(
-      'Torrent not found',
-    );
-    expect((await transmission.listTorrents()).arguments.torrents).toHaveLength(1);
+    await expect(transmission.getTorrent('0'.repeat(40))).rejects.toMatchObject({
+      name: 'TorrentClientError',
+      code: 'torrent_not_found',
+    });
+    // Transmission ignores unknown ids
+    await transmission.removeTorrent('0'.repeat(40));
+  });
+  it('should throw client_error when transmission responds with an error result', async () => {
+    const transmission = createTransmission();
+    await expect(
+      transmission.request('torrent-add', { filename: '/nope.torrent' }),
+    ).rejects.toMatchObject({
+      code: 'client_error',
+    });
+  });
+  it('should throw request_failed without a status when transmission is unreachable', async () => {
+    const transmission = new Transmission({ baseUrl: 'http://127.0.0.1:1/' });
+    const error = await transmission.getAllData().catch((error_: unknown) => error_);
+    expect(error).toBeInstanceOf(TorrentClientError);
+    expect(error).toMatchObject({ code: 'request_failed', status: undefined });
   });
   it('should verify torrent', async () => {
     const transmission = createTransmission();
