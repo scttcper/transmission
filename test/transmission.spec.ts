@@ -117,6 +117,16 @@ describe('Transmission', () => {
     const transmission = createTransmission();
     const key = await setupTorrent(transmission);
     await transmission.removeTorrent(key, false);
+    expect((await transmission.listTorrents()).arguments.torrents).toHaveLength(0);
+  });
+  it('should throw when removing a torrent that does not exist', async () => {
+    const transmission = createTransmission();
+    const key = await setupTorrent(transmission);
+    await expect(transmission.removeTorrent('0'.repeat(40))).rejects.toThrow('Torrent not found');
+    await expect(transmission.removeTorrent([key, '0'.repeat(40)])).rejects.toThrow(
+      'Torrent not found',
+    );
+    expect((await transmission.listTorrents()).arguments.torrents).toHaveLength(1);
   });
   it('should verify torrent', async () => {
     const transmission = createTransmission();
