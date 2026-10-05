@@ -124,6 +124,7 @@ All of the following npm modules provide the same normalized functions along wit
 - qbittorrent - [@ctrl/qbittorrent](https://github.com/scttcper/qbittorrent)
 - utorrent - [@ctrl/utorrent](https://github.com/scttcper/utorrent)
 - rtorrent - [@ctrl/rtorrent](https://github.com/scttcper/rtorrent)
+- rqbit - [@ctrl/rqbit](https://github.com/scttcper/rqbit)
 
 Usenet clients with the same normalized approach:
 
