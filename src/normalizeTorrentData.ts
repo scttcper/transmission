@@ -23,26 +23,35 @@ export function normalizeTorrentData(torrent: Torrent): NormalizedTorrent {
     state = TorrentState.queued;
   }
 
+  const isCompleted = torrent.leftUntilDone < 1;
+  // peers with every piece are seeds, swarm counts come from tracker scrapes (-1 until scraped)
+  const connectedSeeds = torrent.peers.filter(peer => peer.progress === 1).length;
+  const totalSeeds = Math.max(0, ...torrent.trackerStats.map(tracker => tracker.seederCount));
+  const totalPeers = Math.max(0, ...torrent.trackerStats.map(tracker => tracker.leecherCount));
+
   return {
     id: torrent.hashString,
     name: torrent.name,
     state,
-    isCompleted: torrent.leftUntilDone < 1,
-    stateMessage: '',
+    isCompleted,
+    stateMessage: torrent.errorString,
     progress: torrent.percentDone,
-    ratio: torrent.uploadRatio,
+    // -1 is not available and -2 is infinite
+    ratio: Math.max(torrent.uploadRatio, 0),
     dateAdded,
     dateCompleted,
     label: torrent.labels?.length ? torrent.labels[0] : undefined,
     savePath: torrent.downloadDir,
     uploadSpeed: torrent.rateUpload,
     downloadSpeed: torrent.rateDownload,
-    eta: torrent.eta,
-    queuePosition: torrent.queuePosition,
-    connectedPeers: torrent.peersSendingToUs,
-    connectedSeeds: torrent.peersGettingFromUs,
-    totalPeers: torrent.peersConnected,
-    totalSeeds: torrent.peersConnected,
+    // -1 is not available and -2 is unknown
+    eta: isCompleted ? 0 : Math.max(torrent.eta, -1),
+    // transmission's queue position starts at 0
+    queuePosition: torrent.queuePosition + 1,
+    connectedPeers: torrent.peersConnected - connectedSeeds,
+    connectedSeeds,
+    totalPeers,
+    totalSeeds,
     totalSelected: torrent.sizeWhenDone,
     totalSize: torrent.totalSize,
     totalUploaded: torrent.uploadedEver,

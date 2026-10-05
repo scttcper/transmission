@@ -327,6 +327,7 @@ export class Transmission implements TorrentClient {
       'leftUntilDone',
       'metadataPercentComplete',
       'peers',
+      'trackerStats',
       'peersFrom',
       'peersConnected',
       'peersGettingFromUs',

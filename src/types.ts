@@ -116,6 +116,7 @@ export interface Torrent {
    */
   metadataPercentComplete: number;
   peers: Peers[];
+  trackerStats: TrackerStats[];
   peersFrom: PeersFrom[];
   priorities: number[];
   wanted: number[];
@@ -257,6 +258,43 @@ export interface Peers {
   progress: number;
   rateToClient: number;
   rateToPeer: number;
+}
+
+/**
+ * Tracker announce/scrape state, counts are -1 until the tracker has been scraped
+ */
+export interface TrackerStats {
+  announce: string;
+  announceState: number;
+  downloadCount: number;
+  /**
+   * Transmission 4.1+
+   */
+  downloader_count?: number;
+  hasAnnounced: boolean;
+  hasScraped: boolean;
+  host: string;
+  id: number;
+  isBackup: boolean;
+  lastAnnouncePeerCount: number;
+  lastAnnounceResult: string;
+  lastAnnounceStartTime: number;
+  lastAnnounceSucceeded: boolean;
+  lastAnnounceTime: number;
+  lastAnnounceTimedOut: boolean;
+  lastScrapeResult: string;
+  lastScrapeStartTime: number;
+  lastScrapeSucceeded: boolean;
+  lastScrapeTime: number;
+  lastScrapeTimedOut: boolean;
+  leecherCount: number;
+  nextAnnounceTime: number;
+  nextScrapeTime: number;
+  scrape: string;
+  scrapeState: number;
+  seederCount: number;
+  sitename: string;
+  tier: number;
 }
 
 export interface PeersFrom {
