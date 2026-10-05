@@ -88,16 +88,14 @@ export class Transmission implements TorrentClient {
     return res._data;
   }
 
-  async queueUp(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+  async queueUp(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    const res = await this.request<DefaultResponse>('queue-move-up', { ids });
-    return res._data;
+    await this.request<DefaultResponse>('queue-move-up', { ids });
   }
 
-  async queueDown(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+  async queueDown(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    const res = await this.request<DefaultResponse>('queue-move-down', { ids });
-    return res._data;
+    await this.request<DefaultResponse>('queue-move-down', { ids });
   }
 
   async freeSpace(path = '/downloads/complete'): Promise<FreeSpaceResponse> {
@@ -105,16 +103,14 @@ export class Transmission implements TorrentClient {
     return res._data;
   }
 
-  async pauseTorrent(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+  async pauseTorrent(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    const res = await this.request<DefaultResponse>('torrent-stop', { ids });
-    return res._data;
+    await this.request<DefaultResponse>('torrent-stop', { ids });
   }
 
-  async resumeTorrent(id: NormalizedTorrentIds): Promise<DefaultResponse> {
+  async resumeTorrent(id: NormalizedTorrentIds): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    const res = await this.request<DefaultResponse>('torrent-start', { ids });
-    return res._data;
+    await this.request<DefaultResponse>('torrent-start', { ids });
   }
 
   async verifyTorrent(id: NormalizedTorrentIds): Promise<DefaultResponse> {
@@ -171,14 +167,22 @@ export class Transmission implements TorrentClient {
   /**
    * Removing a Torrent
    * @param removeData (default: false) If true, remove the downloaded data.
+   * @throws when a torrent doesn't exist, Transmission silently ignores unknown ids
    */
-  async removeTorrent(id: NormalizedTorrentIds, removeData = false): Promise<AddTorrentResponse> {
+  async removeTorrent(id: NormalizedTorrentIds, removeData = false): Promise<void> {
     const ids = this._handleNormalizedIds(id);
-    const res = await this.request<AddTorrentResponse>('torrent-remove', {
+    if (ids !== 'recently-active') {
+      const requested = new Set(Array.isArray(ids) ? ids : [ids]);
+      const res = await this.request<GetTorrentRepsonse>('torrent-get', { ids, fields: ['id'] });
+      if (res._data.arguments.torrents.length < requested.size) {
+        throw new Error('Torrent not found');
+      }
+    }
+
+    await this.request<DefaultResponse>('torrent-remove', {
       ids,
       'delete-local-data': removeData,
     });
-    return res._data;
   }
 
   /**
@@ -257,7 +261,8 @@ export class Transmission implements TorrentClient {
       }
 
       const res = await this.addTorrent(torrent, torrentOptions);
-      torrentHash = res.arguments['torrent-added'].hashString;
+      torrentHash = (res.arguments['torrent-added'] ?? res.arguments['torrent-duplicate'])
+        .hashString;
     }
 
     if (options.label) {
@@ -327,6 +332,7 @@ export class Transmission implements TorrentClient {
       'leftUntilDone',
       'metadataPercentComplete',
       'peers',
+      'trackerStats',
       'peersFrom',
       'peersConnected',
       'peersGettingFromUs',
@@ -364,6 +370,8 @@ export class Transmission implements TorrentClient {
       'peer-limit',
       'priorities',
       'wanted',
+      'sequential_download',
+      'sequential_download_from_piece',
       'webseeds',
       ...additionalFields,
     ];

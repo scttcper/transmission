@@ -24,7 +24,7 @@ async function setupTorrent(transmission: Transmission): Promise<string> {
     },
     { timeout: 10_000, interval: 200 },
   );
-  return res.arguments['torrent-added'].hashString;
+  return res.arguments['torrent-added']!.hashString;
 }
 
 const createTransmission = () => new Transmission({ baseUrl, username, password });
@@ -61,12 +61,39 @@ describe('Transmission', () => {
     const res = await transmission.addTorrent(torrentFileBuffer);
     expect(res.result).toBe('success');
   });
+  it('should return torrent-duplicate when adding the same torrent twice', async () => {
+    const transmission = createTransmission();
+    await transmission.addTorrent(torrentFileBuffer);
+    const res = await transmission.addTorrent(torrentFileBuffer);
+    expect(res.arguments['torrent-added']).toBeUndefined();
+    expect(res.arguments['torrent-duplicate']!.hashString).toBe(
+      'e84213a794f3ccd890382a54a64ca68b7e925433',
+    );
+  });
+  it('should normalize an already added torrent', async () => {
+    const client = createTransmission();
+    const first = await client.normalizedAddTorrent(torrentFileBuffer);
+    const second = await client.normalizedAddTorrent(torrentFileBuffer);
+    expect(second.id).toBe(first.id);
+  });
   it('should add torrent from file contents base64', async () => {
     const transmission = createTransmission();
     const contents = Buffer.from(torrentFileBuffer).toString('base64');
     const res = await transmission.addTorrent(contents);
     expect(res.result).toBe('success');
   });
+  it('should add and set sequential download', async () => {
+    const transmission = createTransmission();
+    const res = await transmission.addTorrent(torrentFileBuffer, { sequential_download: true });
+    const id = res.arguments['torrent-added']!.hashString;
+    let [torrent] = (await transmission.listTorrents(id)).arguments.torrents;
+    expect(torrent!.sequential_download).toBe(true);
+    expect(torrent!.files[0]!.begin_piece).toBe(0);
+    await transmission.setTorrent(id, { sequential_download: false });
+    [torrent] = (await transmission.listTorrents(id)).arguments.torrents;
+    expect(torrent!.sequential_download).toBe(false);
+  });
+
   it('should get torrents', async () => {
     const transmission = createTransmission();
     await setupTorrent(transmission);
@@ -90,6 +117,16 @@ describe('Transmission', () => {
     const transmission = createTransmission();
     const key = await setupTorrent(transmission);
     await transmission.removeTorrent(key, false);
+    expect((await transmission.listTorrents()).arguments.torrents).toHaveLength(0);
+  });
+  it('should throw when removing a torrent that does not exist', async () => {
+    const transmission = createTransmission();
+    const key = await setupTorrent(transmission);
+    await expect(transmission.removeTorrent('0'.repeat(40))).rejects.toThrow('Torrent not found');
+    await expect(transmission.removeTorrent([key, '0'.repeat(40)])).rejects.toThrow(
+      'Torrent not found',
+    );
+    expect((await transmission.listTorrents()).arguments.torrents).toHaveLength(1);
   });
   it('should verify torrent', async () => {
     const transmission = createTransmission();
@@ -131,11 +168,12 @@ describe('Transmission', () => {
     expect(torrent.downloadSpeed).toBe(0);
     expect(torrent.eta).toBe(-1);
     expect(torrent.isCompleted).toBe(false);
+    expect(torrent.dateCompleted).toBeUndefined();
     expect(torrent.label).toBe('test');
     expect(torrent.name).toBe(torrentName);
     expect(torrent.progress).toBeGreaterThanOrEqual(0);
-    expect(torrent.queuePosition).toBe(0);
-    // expect(torrent.ratio).toBe(0);
+    expect(torrent.queuePosition).toBe(1);
+    expect(torrent.ratio).toBe(0);
     expect(torrent.savePath).toBe('/downloads');
     expect(torrent.state).toBe(TorrentState.checking);
     expect(torrent.stateMessage).toBe('');

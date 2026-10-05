@@ -14,16 +14,30 @@ export interface AddTorrentOptions {
    * Magent link
    */
   filename?: string;
+  /**
+   * download pieces in order, Transmission 4.1+
+   */
+  sequential_download?: boolean;
+  /**
+   * piece to start sequential downloading from, Transmission 4.1+
+   */
+  sequential_download_from_piece?: number;
 }
 
+export interface AddedTorrent {
+  id: number;
+  hashString: string;
+  name: string;
+}
+
+/**
+ * Transmission replies with `torrent-duplicate` instead of `torrent-added` when the torrent already exists
+ * @see https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md#341-adding-a-torrent
+ */
 export interface AddTorrentResponse extends DefaultResponse {
-  arguments: {
-    'torrent-added': {
-      id: number;
-      hashString: string;
-      name: string;
-    };
-  };
+  arguments:
+    | { 'torrent-added': AddedTorrent; 'torrent-duplicate'?: never }
+    | { 'torrent-duplicate': AddedTorrent; 'torrent-added'?: never };
 }
 
 export interface FreeSpaceResponse extends DefaultResponse {
@@ -108,6 +122,7 @@ export interface Torrent {
    */
   metadataPercentComplete: number;
   peers: Peers[];
+  trackerStats: TrackerStats[];
   peersFrom: PeersFrom[];
   priorities: number[];
   wanted: number[];
@@ -178,8 +193,17 @@ export interface Torrent {
   labels: string[];
   /**
    * time when one or more of the torrent's trackers will allow you to manually ask for more peers, or 0 if you can't
+   * @deprecated never worked, deprecated in Transmission 4.1
    */
   manualAnnounceTime: number;
+  /**
+   * download pieces in order, Transmission 4.1+
+   */
+  sequential_download?: boolean;
+  /**
+   * piece to start sequential downloading from, Transmission 4.1+
+   */
+  sequential_download_from_piece?: number;
   maxConnectedPeers: number;
   /**
    * Cumulative seconds the torrent's ever spent downloading
@@ -206,6 +230,14 @@ export interface Files {
   bytesCompleted: number;
   length: number;
   name: string;
+  /**
+   * first piece of the file, Transmission 4.1+
+   */
+  begin_piece?: number;
+  /**
+   * piece after the last piece of the file, Transmission 4.1+
+   */
+  end_piece?: number;
 }
 
 export interface Tracker {
@@ -232,6 +264,43 @@ export interface Peers {
   progress: number;
   rateToClient: number;
   rateToPeer: number;
+}
+
+/**
+ * Tracker announce/scrape state, counts are -1 until the tracker has been scraped
+ */
+export interface TrackerStats {
+  announce: string;
+  announceState: number;
+  downloadCount: number;
+  /**
+   * Transmission 4.1+
+   */
+  downloader_count?: number;
+  hasAnnounced: boolean;
+  hasScraped: boolean;
+  host: string;
+  id: number;
+  isBackup: boolean;
+  lastAnnouncePeerCount: number;
+  lastAnnounceResult: string;
+  lastAnnounceStartTime: number;
+  lastAnnounceSucceeded: boolean;
+  lastAnnounceTime: number;
+  lastAnnounceTimedOut: boolean;
+  lastScrapeResult: string;
+  lastScrapeStartTime: number;
+  lastScrapeSucceeded: boolean;
+  lastScrapeTime: number;
+  lastScrapeTimedOut: boolean;
+  leecherCount: number;
+  nextAnnounceTime: number;
+  nextScrapeTime: number;
+  scrape: string;
+  scrapeState: number;
+  seederCount: number;
+  sitename: string;
+  tier: number;
 }
 
 export interface PeersFrom {
@@ -289,6 +358,14 @@ export interface SessionArguments {
    * maximum size of the disk cache (MB)
    */
   'cache-size-mb': number;
+  /**
+   * default for torrents added without `sequential_download`, Transmission 4.1+
+   */
+  sequential_download?: boolean;
+  /**
+   * transports to connect to peers with in order of preference, replaces `tcp-enabled` and `utp-enabled`. Transmission 4.1+
+   */
+  preferred_transports?: Array<'tcp' | 'utp'>;
   /**
    * location of transmission's configuration directory
    */
@@ -465,6 +542,14 @@ export interface Units {
 }
 
 export interface SetTorrentOptions {
+  /**
+   * download pieces in order, Transmission 4.1+
+   */
+  sequential_download?: boolean;
+  /**
+   * piece to start sequential downloading from, Transmission 4.1+
+   */
+  sequential_download_from_piece?: number;
   /**
    * this torrent's bandwidth tr_priority_t
    */
