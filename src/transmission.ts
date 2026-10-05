@@ -364,6 +364,8 @@ export class Transmission implements TorrentClient {
       'peer-limit',
       'priorities',
       'wanted',
+      'sequential_download',
+      'sequential_download_from_piece',
       'webseeds',
       ...additionalFields,
     ];

@@ -14,6 +14,14 @@ export interface AddTorrentOptions {
    * Magent link
    */
   filename?: string;
+  /**
+   * download pieces in order, Transmission 4.1+
+   */
+  sequential_download?: boolean;
+  /**
+   * piece to start sequential downloading from, Transmission 4.1+
+   */
+  sequential_download_from_piece?: number;
 }
 
 export interface AddTorrentResponse extends DefaultResponse {
@@ -178,8 +186,17 @@ export interface Torrent {
   labels: string[];
   /**
    * time when one or more of the torrent's trackers will allow you to manually ask for more peers, or 0 if you can't
+   * @deprecated never worked, deprecated in Transmission 4.1
    */
   manualAnnounceTime: number;
+  /**
+   * download pieces in order, Transmission 4.1+
+   */
+  sequential_download?: boolean;
+  /**
+   * piece to start sequential downloading from, Transmission 4.1+
+   */
+  sequential_download_from_piece?: number;
   maxConnectedPeers: number;
   /**
    * Cumulative seconds the torrent's ever spent downloading
@@ -206,6 +223,14 @@ export interface Files {
   bytesCompleted: number;
   length: number;
   name: string;
+  /**
+   * first piece of the file, Transmission 4.1+
+   */
+  begin_piece?: number;
+  /**
+   * piece after the last piece of the file, Transmission 4.1+
+   */
+  end_piece?: number;
 }
 
 export interface Tracker {
@@ -289,6 +314,14 @@ export interface SessionArguments {
    * maximum size of the disk cache (MB)
    */
   'cache-size-mb': number;
+  /**
+   * default for torrents added without `sequential_download`, Transmission 4.1+
+   */
+  sequential_download?: boolean;
+  /**
+   * transports to connect to peers with in order of preference, replaces `tcp-enabled` and `utp-enabled`. Transmission 4.1+
+   */
+  preferred_transports?: Array<'tcp' | 'utp'>;
   /**
    * location of transmission's configuration directory
    */
@@ -465,6 +498,14 @@ export interface Units {
 }
 
 export interface SetTorrentOptions {
+  /**
+   * download pieces in order, Transmission 4.1+
+   */
+  sequential_download?: boolean;
+  /**
+   * piece to start sequential downloading from, Transmission 4.1+
+   */
+  sequential_download_from_piece?: number;
   /**
    * this torrent's bandwidth tr_priority_t
    */

@@ -67,6 +67,18 @@ describe('Transmission', () => {
     const res = await transmission.addTorrent(contents);
     expect(res.result).toBe('success');
   });
+  it('should add and set sequential download', async () => {
+    const transmission = createTransmission();
+    const res = await transmission.addTorrent(torrentFileBuffer, { sequential_download: true });
+    const id = res.arguments['torrent-added'].hashString;
+    let [torrent] = (await transmission.listTorrents(id)).arguments.torrents;
+    expect(torrent!.sequential_download).toBe(true);
+    expect(torrent!.files[0]!.begin_piece).toBe(0);
+    await transmission.setTorrent(id, { sequential_download: false });
+    [torrent] = (await transmission.listTorrents(id)).arguments.torrents;
+    expect(torrent!.sequential_download).toBe(false);
+  });
+
   it('should get torrents', async () => {
     const transmission = createTransmission();
     await setupTorrent(transmission);
