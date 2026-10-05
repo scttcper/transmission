@@ -24,14 +24,20 @@ export interface AddTorrentOptions {
   sequential_download_from_piece?: number;
 }
 
+export interface AddedTorrent {
+  id: number;
+  hashString: string;
+  name: string;
+}
+
+/**
+ * Transmission replies with `torrent-duplicate` instead of `torrent-added` when the torrent already exists
+ * @see https://github.com/transmission/transmission/blob/main/docs/rpc-spec.md#341-adding-a-torrent
+ */
 export interface AddTorrentResponse extends DefaultResponse {
-  arguments: {
-    'torrent-added': {
-      id: number;
-      hashString: string;
-      name: string;
-    };
-  };
+  arguments:
+    | { 'torrent-added': AddedTorrent; 'torrent-duplicate'?: never }
+    | { 'torrent-duplicate': AddedTorrent; 'torrent-added'?: never };
 }
 
 export interface FreeSpaceResponse extends DefaultResponse {

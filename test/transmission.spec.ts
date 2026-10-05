@@ -24,7 +24,7 @@ async function setupTorrent(transmission: Transmission): Promise<string> {
     },
     { timeout: 10_000, interval: 200 },
   );
-  return res.arguments['torrent-added'].hashString;
+  return res.arguments['torrent-added']!.hashString;
 }
 
 const createTransmission = () => new Transmission({ baseUrl, username, password });
@@ -61,6 +61,21 @@ describe('Transmission', () => {
     const res = await transmission.addTorrent(torrentFileBuffer);
     expect(res.result).toBe('success');
   });
+  it('should return torrent-duplicate when adding the same torrent twice', async () => {
+    const transmission = createTransmission();
+    await transmission.addTorrent(torrentFileBuffer);
+    const res = await transmission.addTorrent(torrentFileBuffer);
+    expect(res.arguments['torrent-added']).toBeUndefined();
+    expect(res.arguments['torrent-duplicate']!.hashString).toBe(
+      'e84213a794f3ccd890382a54a64ca68b7e925433',
+    );
+  });
+  it('should normalize an already added torrent', async () => {
+    const client = createTransmission();
+    const first = await client.normalizedAddTorrent(torrentFileBuffer);
+    const second = await client.normalizedAddTorrent(torrentFileBuffer);
+    expect(second.id).toBe(first.id);
+  });
   it('should add torrent from file contents base64', async () => {
     const transmission = createTransmission();
     const contents = Buffer.from(torrentFileBuffer).toString('base64');
@@ -70,7 +85,7 @@ describe('Transmission', () => {
   it('should add and set sequential download', async () => {
     const transmission = createTransmission();
     const res = await transmission.addTorrent(torrentFileBuffer, { sequential_download: true });
-    const id = res.arguments['torrent-added'].hashString;
+    const id = res.arguments['torrent-added']!.hashString;
     let [torrent] = (await transmission.listTorrents(id)).arguments.torrents;
     expect(torrent!.sequential_download).toBe(true);
     expect(torrent!.files[0]!.begin_piece).toBe(0);

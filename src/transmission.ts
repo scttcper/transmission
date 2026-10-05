@@ -172,9 +172,9 @@ export class Transmission implements TorrentClient {
    * Removing a Torrent
    * @param removeData (default: false) If true, remove the downloaded data.
    */
-  async removeTorrent(id: NormalizedTorrentIds, removeData = false): Promise<AddTorrentResponse> {
+  async removeTorrent(id: NormalizedTorrentIds, removeData = false): Promise<DefaultResponse> {
     const ids = this._handleNormalizedIds(id);
-    const res = await this.request<AddTorrentResponse>('torrent-remove', {
+    const res = await this.request<DefaultResponse>('torrent-remove', {
       ids,
       'delete-local-data': removeData,
     });
@@ -257,7 +257,8 @@ export class Transmission implements TorrentClient {
       }
 
       const res = await this.addTorrent(torrent, torrentOptions);
-      torrentHash = res.arguments['torrent-added'].hashString;
+      torrentHash = (res.arguments['torrent-added'] ?? res.arguments['torrent-duplicate'])
+        .hashString;
     }
 
     if (options.label) {
